@@ -1,0 +1,25 @@
+Bulk Roma Tomatoes|24.50|food|FreshFields|vegetable,produce,bulk|Ripe Roma tomatoes packed for restaurants and catering.
+Frozen Chicken Breast (10kg)|79.99|food|ChefPro|meat,frozen,bulk,protein|Lean boneless chicken breasts, individually quick-frozen for long shelf life.
+All-Purpose Flour 25kg|32.00|food|KitchenMax|baking,pantry,bulk|High-protein all-purpose flour ideal for breads and pastries.
+Disposable Paper Food Trays (1000ct)|18.75|packaging|BistroLine|disposable,packaging,eco-friendly|Sturdy paper food trays for serving and takeout, compostable.
+Stainless Steel Chef Knife 10in|59.95|utensils|SteelChef|cutlery,knife,kitchen|High-carbon stainless chef knife for precision slicing and dicing.
+Commercial Non-stick Fry Pan 12in|44.99|cookware|KitchenMax|pan,cookware,non-stick|Durable non-stick fry pan for daily restaurant use.
+Reusable Nylon Spatula Set (3pc)|9.50|utensils|ChefPro|spatula,utensil,heat-resistant|Flexible nylon spatulas safe for non-stick surfaces.
+Bulk White Sugar 50lb|27.00|food|FreshFields|sugar,pantry,bulk|Refined granulated sugar for baking and beverage service.
+Glass Beverage Dispenser 5L|22.00|serveware|BistroLine|beverage,dispense,glass|Clear glass dispenser with spigot, ideal for cold beverages and infusions.
+Heavy-Duty Oven Mitts (pair)|12.99|safety|SteelChef|safety,gloves,heat-resistant|Insulated oven mitts for handling hot trays and pans.
+Restaurant-Grade Food Thermometer|18.49|equipment|ChefPro|thermometer,food-safety,tool|Digital instant-read thermometer for safe cooking temperatures.
+Parchment Paper Rolls 12in x 500ft|15.25|packaging|KitchenMax|baking,disposable,liner|Non-stick parchment rolls for baking and lining trays.
+Canned San Marzano Tomatoes (24 cans)|48.00|food|FreshFields|canned,tomato,pantry|Authentic San Marzano tomatoes, peeled and packed in juice.
+Porcelain Dinner Plates (12in, 24pc)|129.99|serveware|BistroLine|dinnerware,ceramic,service|Durable porcelain plates designed for high-volume service.
+Commercial Stock Pot 40qt|199.99|cookware|SteelChef|pot,stock,large|Heavy-gauge stainless steel stock pot for soups and stocks.
+Squeeze Bottle Set (12oz, 12pc)|11.50|utensils|ChefPro|squeeze,sauce,dispense|Plastic squeeze bottles for sauces, dressings, and plating.
+Espresso Roast Coffee Beans 5kg|89.00|beverage|FreshFields|coffee,beans,roast|Medium-dark roast coffee beans tailored for espresso machines.
+Insulated Food Delivery Bags LARGE|34.99|packaging|BistroLine|delivery,insulated,transport|Thermal delivery bag to keep hot foods at serving temperature.
+Braided Cotton Kitchen Towels (50ct)|29.99|cleaning|KitchenMax|towel,cleaning,linen|Absorbent cotton towels for wiping and polishing in kitchens.
+Professional Immersion Blender 1.5hp|249.00|equipment|SteelChef|blender,immersion,foodprep|High-power immersion blender for soups, sauces, and purees.
+Frozen French Fries 10kg Bag|21.99|food|ChefPro|frozen,side,deli|Crisp-cut frozen fries suitable for fryers and ovens.
+Clamshell To-Go Containers 500ct|39.50|packaging|BistroLine|takeout,disposable,plastic|Durable hinged clamshell containers for hot and cold foods.
+Olive Oil Extra Virgin 20L|149.99|food|FreshFields|oil,pantry,bulk|Cold-pressed extra virgin olive oil for cooking and finishing.
+Bamboo Chopsticks 1000 pairs|16.75|utensils|KitchenMax|chopsticks,disposable,wood|Eco-friendly single-use bamboo chopsticks for sushi and Asian cuisine.
+Commercial Dish Rack (Pro Series)|89.95|equipment|SteelChef|dishwashing,rack,organization|Heavy-duty dish rack for fast drying and storage in busy kitchens.
