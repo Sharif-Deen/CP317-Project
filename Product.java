@@ -8,14 +8,18 @@ public class Product {
     private String brand;
     private List<String> tags;
     private String description;
+    private String location;
+    private int stock;
 
-    public Product(String name, double price, String type, String brand, String tags, String description) {
+    public Product(String name, double price, String type, String brand, String tags, String description, String location, int stock) {
         this.name = name;
         this.price = price;
         this.type = type;
         this.brand = brand;
         this.tags = Arrays.asList(tags.split(","));
         this.description = description;
+        this.location = location;
+        this.stock = stock;
     }
 
     public String getName() { return name; }
@@ -24,6 +28,8 @@ public class Product {
     public String getBrand() { return brand; }
     public List<String> getTags() { return tags; }
     public String getDescription() { return description; }
+    public String getLocation() { return location; }
+    public int getStock() { return stock; }
 
     @Override
     public String toString() {
