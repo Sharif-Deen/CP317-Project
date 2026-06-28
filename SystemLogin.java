@@ -10,7 +10,6 @@ public class SystemLogin {
         // users will need to input login info.
 
         while(true) {
-
                 System.out.println("Welcome to Laurier Food Services.");
                 System.out.println("\n1. Login");
                 System.out.println("2. Create Account");
@@ -36,10 +35,10 @@ public class SystemLogin {
     }
 
     public void login() {
-        System.out.print("Enter your username: "); 
+        System.out.print("Enter username: "); 
         String username = scanner.nextLine();
 
-        System.out.println("Enter your password: ");
+        System.out.print("Enter password: ");
         String password = scanner.nextLine();
 
         System.out.println("Enter 1 if you are a customer.");
@@ -62,7 +61,7 @@ public class SystemLogin {
 
         boolean verified = pManager.userVerification(username, password, category);
         if(verified == true) {
-            System.out.printf("Login successful, welcome %s", username);
+            System.out.printf("Login successful, welcome %s\n", username);
         }
         else {
             System.out.println("Login unsuccessful."); 
@@ -75,7 +74,7 @@ public class SystemLogin {
         String password; 
 
         while(true) {
-            System.out.println("Enter password: ");
+            System.out.print("Enter password: ");
             password = scanner.nextLine();
 
             if(PasswordValidity(password) == true)
