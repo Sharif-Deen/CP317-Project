@@ -10,7 +10,6 @@ public class SystemLogin {
         // users will need to input login info.
 
         while(true) {
-
                 System.out.println("Welcome to Laurier Food Services.");
                 System.out.println("\n1. Login");
                 System.out.println("2. Create Account");
@@ -22,7 +21,6 @@ public class SystemLogin {
                 
                 if(selection == 1) {
                     login();
-                    break;
                 }
                 else if(selection == 2) {
                     CreateAccount();
