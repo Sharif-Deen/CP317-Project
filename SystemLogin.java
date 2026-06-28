@@ -74,7 +74,7 @@ public class SystemLogin {
         String password; 
 
         while(true) {
-            System.out.println("Enter password: ");
+            System.out.print("Enter password: ");
             password = scanner.nextLine();
 
             if(PasswordValidity(password) == true)
