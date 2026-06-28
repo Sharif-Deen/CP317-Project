@@ -17,7 +17,7 @@ public class BasicSearch {
                 if (line.trim().isEmpty()) continue;
 
                 String[] parts = line.split("\\|");
-                if (parts.length < 6) continue;
+                if (parts.length < 8) continue;
 
                 String name = parts[0].trim();
                 double price = Double.parseDouble(parts[1].trim());
@@ -25,8 +25,10 @@ public class BasicSearch {
                 String brand = parts[3].trim();
                 String tags = parts[4].trim();
                 String description = parts[5].trim();
+                String location = parts[6].trim();
+                int stock = Integer.parseInt(parts[7].trim());
 
-                products.add(new Product(name, price, type, brand, tags, description));
+                products.add(new Product(name, price, type, brand, tags, description, location, stock));
             }
             reader.close();
         } catch (IOException e) {
@@ -44,6 +46,7 @@ public class BasicSearch {
             boolean matchesType = p.getType().toLowerCase().contains(kw);
             boolean matchesDesc = p.getDescription().toLowerCase().contains(kw);
             boolean matchesTag = false;
+            boolean matchesLoc = p.getLocation().toLowerCase().contains(kw);
 
             for (String tag : p.getTags()) {
                 if (tag.toLowerCase().contains(kw)) {
@@ -52,7 +55,7 @@ public class BasicSearch {
                 }
             }
 
-            if (matchesName || matchesBrand || matchesType || matchesDesc || matchesTag) {
+            if (matchesName || matchesBrand || matchesType || matchesDesc || matchesTag || matchesLoc) {
                 results.add(p);
             }
         }

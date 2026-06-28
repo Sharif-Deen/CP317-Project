@@ -20,7 +20,9 @@ public class ShoppingCartDemo {
                 "food",
                 "FreshFields",
                 "vegetable,produce,bulk",
-                "Ripe Roma tomatoes packed for restaurants and catering."
+                "Ripe Roma tomatoes packed for restaurants and catering.",
+                "Toronto",
+                10
         ));
 
         products.add(new Product(
@@ -29,7 +31,9 @@ public class ShoppingCartDemo {
                 "food",
                 "ChefPro",
                 "meat,frozen,bulk,protein",
-                "Lean boneless chicken breasts."
+                "Lean boneless chicken breasts.",
+                "Waterloo",
+                0
         ));
 
         products.add(new Product(
@@ -38,7 +42,9 @@ public class ShoppingCartDemo {
                 "food",
                 "GrainHouse",
                 "rice,bulk,grain",
-                "Large bag of organic white rice for restaurants."
+                "Large bag of organic white rice for restaurants.",
+                "Cambridge",
+                8
         ));
 
         products.add(new Product(
@@ -47,7 +53,9 @@ public class ShoppingCartDemo {
                 "food",
                 "PureHarvest",
                 "oil,cooking,bulk",
-                "Large bottle of olive oil for cooking."
+                "Large bottle of olive oil for cooking.",
+                "Waterloo",
+                12
         ));
 
         boolean running = true;
