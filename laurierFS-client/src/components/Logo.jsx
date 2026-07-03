@@ -1,6 +1,15 @@
+import "../styles/Logo.css"
+
 const Logo = () => {
     return(
-        <div style={{borderRadius:"50%", width:"100px",height:"100px",border:"5px solid black",display:"flex",alignItems:"center",justifyContent:"center"}}>Laurier Food Services</div>
+        <div className="logo-container">
+            <div className="logo-circle">LFS</div>
+            <h1 className="logo-title">
+                <span className="logo-laurier">LAURIER </span>
+                <span className="logo-foodservices">Food Services</span>
+
+            </h1>
+        </div>
     )
 }
 
