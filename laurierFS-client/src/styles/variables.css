@@ -1,0 +1,7 @@
+/* When you want to use the colors, do: var(--primary) or var(--accent) instead of having to type the colors each time
+Also, @import 'variables.css' at the top of the css file*/
+
+:root {
+  --primary: #330072;
+  --accent: #f2a900;
+}
