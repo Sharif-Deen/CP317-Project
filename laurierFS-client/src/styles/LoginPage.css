@@ -1,3 +1,5 @@
+@import 'variables.css';
+
 
 .login-page {
     min-height: 100vh;        /* full screen height */
@@ -5,7 +7,7 @@
     flex-direction: column;
     align-items: center;      /* centers vertically */
     justify-content: center;  /* centers horizontally */
-    background: linear-gradient(135deg, #330072, #771eb7);
+    background: linear-gradient(135deg, var(--primary), #771eb7);
 }
 
 .login-card {
@@ -62,7 +64,7 @@ label{
 .login-btn {
   width:100%;
   padding: 10px;
-  background-color: #330072;
+  background-color: var(--primary);
   color: #ffffff;
   border-radius: 20px;
   height: 40px;
@@ -72,8 +74,8 @@ label{
   cursor:pointer;
   transition: all 0.1s ease;
 }.login-btn:hover {
-  background-color: #f2a900;
-  color: #330072;
+  background-color: var(--accent);
+  color: var(--primary);
   cursor: pointer;
 }.login-btn:active {
   background-color: #28005a;
@@ -81,7 +83,7 @@ label{
 }
 
 a {
-  color:#330072;
+  color:var(--primary);
   text-decoration: underline;
   font-size:small;
 }
@@ -89,12 +91,12 @@ a {
 .show-btn {
   background:none;
   border:none;
-  color:#330072;
+  color:var(--primary);
   cursor: pointer;
   font-size: 14px;
   text-decoration: underline;
 }.show-btn:hover{
-  color:#f2a900;
+  color:var(--accent);
   cursor: pointer;
 }.show-btn:active{
   color:#b88100;
