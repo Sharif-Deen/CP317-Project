@@ -1,3 +1,5 @@
+// Dummy data translated into JavaScript objects for testing
+
 const products = [
   {
     "id": 1,

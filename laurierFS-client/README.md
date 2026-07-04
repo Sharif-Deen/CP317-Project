@@ -1,16 +1,42 @@
-# React + Vite
+# Laurier Food Services - Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Front-end for the Laurier Food Services supply chain and logistics management system.
 
-Currently, two official plugins are available:
+## Tech Stack
+- React.js (Vite)
+- React Router DOM
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Prerequisites
+- Node.js (LTS) - download from nodejs.org
+- Git
 
-## React Compiler
+## Setup
+1. Clone the repository
+2. Navigate into the client folder:
+   cd laurierFS-client
+3. Install dependencies:
+   npm install
+4. Start the development server:
+   npm run dev
+5. Open http://localhost:5173 in your browser
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Branching Rules
+- Never work directly on main
+- Always create a feature branch: feature/page-name
+- Open a Pull Request into main when your page is complete
+- Pull latest main into your branch daily
 
-## Expanding the ESLint configuration
+## Branch Naming Convention
+- feature/home-page
+- feature/product-details
+- feature/shopping-cart
+- feature/checkout
+- feature/admin-dashboard
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Project Structure
+src/
+  components/   reusable building blocks
+  pages/        full page components
+  services/     data fetching layer
+  data/         mock data
+  styles/       CSS files

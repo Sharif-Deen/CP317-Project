@@ -3,12 +3,19 @@ import Button from "../components/Button.jsx"
 import InputField from "../components/InputField.jsx"
 import Logo from "../components/Logo.jsx"
 import "../styles/LoginPage.css"
-
+import { useNavigate } from "react-router-dom"
+import { login } from "../services/authService"
 
 const LoginPage = ()=> {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [showpassword, setShowPassword] = useState(false)
+    const navigate = useNavigate()
+
+    const handleLogin = () => {
+        const result = login(email, password)
+        result.role==="admin"?navigate("/admin"):navigate("/home")
+    }
 
     return(
     <div className="login-page">
@@ -22,7 +29,7 @@ const LoginPage = ()=> {
                 </div>
                 <InputField type={showpassword ? "text" : "password"} placeholder="" onChange={(e)=> setPassword(e.target.value)} value={password}></InputField>
             </div>
-            <Button className="login-btn" onClick={()=>{}} label="Login" type="button"></Button>
+            <Button className="login-btn" onClick={handleLogin} label="Login" type="button"></Button>
             <Button className="login-btn" onClick={()=>{}} label="Sign Up" type="button"></Button>
             <a href="#">Forgot Password?</a>
             <a href="#">Continue as Guest</a>
@@ -30,5 +37,7 @@ const LoginPage = ()=> {
         </div>
     </div>
 )}
+
+
 
 export default LoginPage
