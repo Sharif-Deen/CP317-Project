@@ -41,6 +41,9 @@ public class SystemLogin {
         System.out.print("Enter password: ");
         String password = scanner.nextLine();
 
+        System.out.print("Enter email address: ");
+        String email = scanner.nextLine();
+
         System.out.println("Enter 1 if you are a customer.");
         System.out.println("Enter 2 if you are a staff member.");
 
@@ -59,7 +62,7 @@ public class SystemLogin {
             return;
         }
 
-        boolean verified = pManager.userVerification(username, password, category);
+        boolean verified = pManager.userVerification(username, password, category, email);
         if(verified == true) {
             System.out.printf("Login successful, welcome %s\n", username);
         }
@@ -69,9 +72,24 @@ public class SystemLogin {
     }
 
     public void CreateAccount() {
+        /* 
+         * Updated create account username portion to check if it is not already taken.
+         */
+
+        String username; 
+
+        while (true) {
         System.out.print("Enter username: ");
-        String username = scanner.nextLine();
-        String password; 
+        username = scanner.nextLine();
+        
+        if(pManager.userExists(username))
+            System.out.println("Username is already taken, please try a different one.");
+        else 
+            break;
+        }
+
+        String password;
+        String email;
 
         while(true) {
             System.out.print("Enter password: ");
@@ -81,6 +99,17 @@ public class SystemLogin {
                 break;
 
             System.out.println("Try again.");
+        }
+
+        while(true) {
+            System.out.print("Enter your email address: ");
+            email = scanner.nextLine();
+            if(pManager.isValidEmail(email)) {
+                break;
+            }
+            else {
+                System.out.println("Invalid email. Ensure it is of the form: text@text.com. ");
+            }
         }
 
         System.out.println("Enter 1 if you are a customer.");
@@ -102,7 +131,7 @@ public class SystemLogin {
             return;
         }
 
-        User user = new User(username, password, category);
+        User user = new User(username, password, category, email);
         pManager.UserInformation(user);
         
     }
@@ -135,12 +164,10 @@ public class SystemLogin {
         }
 
         if(!upper || !lower || !number || !specialCase) {
-            System.out.println("Enesure the password contains: 1 uppercase letter, 1 lowercase letter, 1 number, and one special case character.");
+            System.out.println("Ensure the password contains: 1 uppercase letter, 1 lowercase letter, 1 number, and one special case character.");
             return false;
         }
         
         return true;  
     }
-
-
 }
