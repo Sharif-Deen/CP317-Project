@@ -1,0 +1,103 @@
+@import 'variables.css';
+
+
+.login-page {
+    min-height: 100vh;        /* full screen height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;      /* centers vertically */
+    justify-content: center;  /* centers horizontally */
+    background: linear-gradient(135deg, var(--primary), #771eb7);
+}
+
+.login-card {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+  gap: 16px;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 5px;
+  background-color: rgb(240, 240, 240);
+  border: none;
+  font-size:14px;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+input:focus {
+  outline: none;
+  border-color: #3498db;
+  /* Horizontal offset, vertical offset, blur radius, color */
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.6); 
+}
+
+label{
+  font-size:medium;
+  font-weight: 500;
+}
+
+.input-field-wrapper{
+  width: 100%;
+}
+
+.password-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.password-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.login-btn {
+  width:100%;
+  padding: 10px;
+  background-color: var(--primary);
+  color: #ffffff;
+  border-radius: 20px;
+  height: 40px;
+  border: none;
+  font-size: medium;
+  font-weight: 500;
+  cursor:pointer;
+  transition: all 0.1s ease;
+}.login-btn:hover {
+  background-color: var(--accent);
+  color: var(--primary);
+  cursor: pointer;
+}.login-btn:active {
+  background-color: #28005a;
+  transform: scale(0.98);
+}
+
+a {
+  color:var(--primary);
+  text-decoration: underline;
+  font-size:small;
+}
+
+.show-btn {
+  background:none;
+  border:none;
+  color:var(--primary);
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+}.show-btn:hover{
+  color:var(--accent);
+  cursor: pointer;
+}.show-btn:active{
+  color:#b88100;
+}
