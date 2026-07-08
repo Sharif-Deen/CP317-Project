@@ -361,3 +361,19 @@
   padding-top: 8px;
   margin-top: 8px;
 }
+
+.cancel-btn {
+  background: #f2d060;
+  color: #4a0ba3;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: #f2d060;
+}
