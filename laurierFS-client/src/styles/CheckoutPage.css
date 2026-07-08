@@ -377,3 +377,8 @@
 .cancel-btn:hover {
   background: #f2d060;
 }
+.header-tagline {
+    color: var(--accent);
+    font-style: italic;
+    font-size: 14px;
+}

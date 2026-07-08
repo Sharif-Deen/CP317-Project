@@ -157,13 +157,13 @@ export default function CheckoutPage() {
 
       <div className="checkout-navbar">
         <Logo />
-
+      <span className="header-tagline">Serving the Waterloo Region</span>
         <div className="nav-links">
   <button
     className="cancel-btn"
     onClick={() => navigate("/cart")}
   >
-    Cancel
+    Back to Cart
   </button>
 </div>
       </div>
