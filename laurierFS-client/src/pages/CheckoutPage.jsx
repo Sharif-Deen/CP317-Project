@@ -336,7 +336,7 @@ export default function CheckoutPage() {
                       })
                     }
                   >
-                    💳 Credit Card
+                    Credit Card
                   </button>
 
                   <button
@@ -352,7 +352,7 @@ export default function CheckoutPage() {
                       })
                     }
                   >
-                    🏦 Debit Card
+                    Debit Card
                   </button>
 
                 </div>
