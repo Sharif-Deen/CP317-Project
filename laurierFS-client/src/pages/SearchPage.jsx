@@ -2,17 +2,27 @@ import { useState } from "react"
 import { getProducts } from "../services/productService"
 import { useNavigate } from "react-router-dom"
 import { useCart } from "../context/CartContext"
+import Logo from "../components/Logo.jsx"
 import "../styles/SearchPage.css"
-import Logo from "../components/Logo"
 
 const SearchPage = () => {
+    const navigate = useNavigate()
+    const { addToCart, cartCount } = useCart()
     const allProducts = getProducts()
+
     const [keyword, setKeyword] = useState("")
     const [filterPrice, setFilterPrice] = useState("none")
     const [filterStock, setFilterStock] = useState(false)
     const [filterLocation, setFilterLocation] = useState("")
+    const [toast, setToast] = useState(null)
 
     const locations = [...new Set(allProducts.map(p => p.location))]
+
+    const handleAdd = (product) => {
+        addToCart(product)
+        setToast(`${product.name} added to cart`)
+        setTimeout(() => setToast(null), 2000)
+    }
 
     const filtered = allProducts
         .filter(p => {
@@ -32,21 +42,24 @@ const SearchPage = () => {
             if (filterPrice === "high") return b.price - a.price
             return 0
         })
-    const navigate = useNavigate()
-    const { totalItems } = useCart()
 
     return (
         <div className="search-page">
-            <div className="search-header">
-    <Logo />
-    <span className="tagline">Serving the Waterloo Region</span>
-    <div className="header-right">
-        <button className="cart-btn" onClick={() => navigate("/cart")}>
-            🛒 <span className="cart-count">{totalItems}</span>
-        </button>
-        <button className="logout-btn" onClick={() => navigate("/")}>Logout</button>
-    </div>
-</div>
+            <header className="search-header">
+                <div className="header-left">
+                    <Logo />
+                </div>
+                <span className="header-tagline">Serving the Waterloo Region</span>
+                <div className="header-right">
+                    <button className="cart-btn" onClick={() => navigate("/cart")}>
+                        🛒 <span className="cart-count">{cartCount}</span>
+                    </button>
+                    <button className="logout-btn" onClick={() => navigate("/")}>Logout</button>
+                </div>
+            </header>
+
+            {toast && <div className="toast">✓ {toast}</div>}
+
             <div className="search-body">
                 <input
                     className="search-bar"
@@ -82,10 +95,28 @@ const SearchPage = () => {
 
                 <p className="result-count">{filtered.length} product(s) found</p>
 
-                
+                <div className="product-grid">
+                    {filtered.map(p => (
+                        <div key={p.id} className="product-card">
+                            <h3>{p.name}</h3>
+                            <p className="price">${p.price.toFixed(2)}</p>
+                            <p className="meta">{p.type} | {p.brand}</p>
+                            <p className="meta">📍 {p.location}</p>
+                            <p className={p.stock > 0 ? "stock-badge" : "out-of-stock"}>
+                                {p.stock > 0 ? `In Stock (${p.stock})` : "Out of Stock"}
+                            </p>
+                            <button
+                                className="add-btn"
+                                disabled={p.stock === 0}
+                                onClick={() => handleAdd(p)}
+                            >
+                                {p.stock > 0 ? "Add to Cart" : "Unavailable"}
+                            </button>
+                        </div>
+                    ))}
                 </div>
             </div>
-        
+        </div>
     )
 }
 
