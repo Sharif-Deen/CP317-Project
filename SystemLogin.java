@@ -4,7 +4,7 @@ public class SystemLogin {
 
     Scanner scanner = new Scanner(System.in);
     PasswordManager pManager = new PasswordManager();
-    private final String ADMIN_KEYWORD = "LaurierAdmin1389";
+    private final String ADMIN_KEYWORD = "LaurierAdmin2026";
 
     public void LoginMainMenu() { 
         //Method that will be used to call the main menu, where 
@@ -120,6 +120,7 @@ public class SystemLogin {
 
         System.out.println("Enter 1 if you are a customer.");
         System.out.println("Enter 2 if you are a staff member.");
+        System.out.println("Enter 3 if you are an admin.");
 
         int selection = Integer.parseInt(scanner.nextLine());
         
