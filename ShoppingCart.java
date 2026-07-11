@@ -67,7 +67,12 @@ public class ShoppingCart {
         double total = 0;
 
         for (CartItem item : items) {
-            total += item.getProduct().getPrice() * item.getQuantity();
+            if (item.getQuantity() >= 50) {
+                double initialTotal = item.getProduct().getPrice() * item.getQuantity();
+                total += initialTotal - (initialTotal * 0.10); 
+            } else {
+                total += item.getProduct().getPrice() * item.getQuantity();
+            }
         }
 
         return total;
