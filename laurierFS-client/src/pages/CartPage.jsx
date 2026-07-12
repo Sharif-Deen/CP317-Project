@@ -15,14 +15,14 @@ const CartPage = () => {
         <div className="cart-page">
              <header className="cart-header">
                 <div className="header-left" onClick={() => navigate("/search")} style={{ cursor: "pointer" }}>
-                    <Logo />
+                    <Logo light={true} />
                 </div>
                 <span className="header-tagline">Serving the Waterloo Region</span>
-                <div className="header-right-col">
+                <div className="header-right">
                     <button className="back-btn" onClick={() => navigate("/search")}>
                         ← Continue Shopping
                     </button>
-                    <span className="page-badge">🛒 Your Cart</span>
+                    <button className="profile-btn" onClick={() => navigate("/")}>👤</button>
                 </div>
             </header>
 
@@ -77,7 +77,7 @@ const CartPage = () => {
                                 <span>Total</span>
                                 <span>${grandTotal.toFixed(2)}</span>
                             </div>
-                            <button className="checkout-btn" onClick={() => alert("Checkout page coming soon!")}>
+                            <button className="checkout-btn" onClick={() => navigate("/checkout")}>
                                 Proceed to Checkout
                             </button>
                         </div>

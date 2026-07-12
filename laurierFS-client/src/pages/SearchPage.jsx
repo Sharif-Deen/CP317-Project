@@ -47,14 +47,16 @@ const SearchPage = () => {
         <div className="search-page">
             <header className="search-header">
                 <div className="header-left">
-                    <Logo />
+                    <Logo light={true} />
                 </div>
                 <span className="header-tagline">Serving the Waterloo Region</span>
                 <div className="header-right">
                     <button className="cart-btn" onClick={() => navigate("/cart")}>
-                        🛒 <span className="cart-count">{cartCount}</span>
+                        🛒 Cart <span className="cart-count">{cartCount}</span>
                     </button>
-                    <button className="logout-btn" onClick={() => navigate("/")}>Logout</button>
+                    <button className="profile-btn" onClick={() => navigate("/")}>
+                        👤
+                    </button>
                 </div>
             </header>
 
