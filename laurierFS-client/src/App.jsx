@@ -1,6 +1,7 @@
 import LoginPage from "./pages/LoginPage"
 import SearchPage from "./pages/SearchPage"
 import CartPage from "./pages/CartPage"
+import CheckoutPage from "./pages/CheckoutPage"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { CartProvider } from "./context/CartContext"
 
@@ -13,6 +14,7 @@ function App() {
           <Route path="/home" element={<SearchPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/admin" element={<div>Admin Page Coming Soon</div>} />
         </Routes>
       </BrowserRouter>
