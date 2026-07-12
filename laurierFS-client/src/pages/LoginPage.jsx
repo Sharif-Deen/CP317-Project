@@ -14,7 +14,7 @@ const LoginPage = ()=> {
 
     const handleLogin = () => {
         const result = login(email, password)
-        result.role==="admin"?navigate("/admin"):navigate("/home")
+        result.role==="admin"?navigate("/admin"):navigate("/search")
     }
 
     return(

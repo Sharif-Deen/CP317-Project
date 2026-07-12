@@ -1,15 +1,24 @@
 import LoginPage from "./pages/LoginPage"
-import {BrowserRouter, Route, Routes} from "react-router-dom"
+import SearchPage from "./pages/SearchPage"
+import CartPage from "./pages/CartPage"
+import CheckoutPage from "./pages/CheckoutPage"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { CartProvider } from "./context/CartContext"
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/home" element={<div>Home Page Coming Soon</div>} />
-        <Route path="/admin" element={<div>Admin Page Coming Soon</div>} />
-      </Routes>
-    </BrowserRouter>
+    <CartProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/home" element={<SearchPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/admin" element={<div>Admin Page Coming Soon</div>} />
+        </Routes>
+      </BrowserRouter>
+    </CartProvider>
   )
 }
 
