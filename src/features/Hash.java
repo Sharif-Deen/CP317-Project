@@ -1,3 +1,4 @@
+package features;
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
 
