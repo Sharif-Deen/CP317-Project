@@ -1,3 +1,4 @@
+package server;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import com.sun.net.httpserver.Headers;

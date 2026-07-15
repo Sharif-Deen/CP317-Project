@@ -1,3 +1,4 @@
+package features;
 import java.util.Scanner;
 
 public class Checkout {
