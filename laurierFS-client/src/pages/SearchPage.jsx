@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { getProducts } from "../services/productService"
 import { useNavigate } from "react-router-dom"
 import { useCart } from "../context/CartContext"
@@ -8,7 +8,25 @@ import "../styles/SearchPage.css"
 const SearchPage = () => {
     const navigate = useNavigate()
     const { addToCart, cartCount } = useCart()
-    const allProducts = getProducts()
+
+    //fetch products from database
+    const [allProducts, setAllProducts] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await getProducts()
+                setAllProducts(data)
+            } catch (err) {
+                setError("Failed to load products")
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchData()
+    }, [])
 
     const [keyword, setKeyword] = useState("")
     const [filterPrice, setFilterPrice] = useState("none")
@@ -95,28 +113,56 @@ const SearchPage = () => {
                     </label>
                 </div>
 
-                <p className="result-count">{filtered.length} product(s) found</p>
-
+                {/* display skeleton product cards while loading */}
+                {loading && (
                 <div className="product-grid">
-                    {filtered.map(p => (
-                        <div key={p.id} className="product-card">
-                            <h3>{p.name}</h3>
-                            <p className="price">${p.price.toFixed(2)}</p>
-                            <p className="meta">{p.type} | {p.brand}</p>
-                            <p className="meta">📍 {p.location}</p>
-                            <p className={p.stock > 0 ? "stock-badge" : "out-of-stock"}>
-                                {p.stock > 0 ? `In Stock (${p.stock})` : "Out of Stock"}
-                            </p>
-                            <button
-                                className="add-btn"
-                                disabled={p.stock === 0}
-                                onClick={() => handleAdd(p)}
-                            >
-                                {p.stock > 0 ? "Add to Cart" : "Unavailable"}
-                            </button>
+                    {[...Array(12)].map((_, i) => (
+                        <div key={i} className="product-card skeleton">
+                            <div className="skeleton-title"></div>
+                            <div className="skeleton-line"></div>
+                            <div className="skeleton-line"></div>
                         </div>
                     ))}
                 </div>
+                )}
+
+                {/* display error message if product fetch failed */}
+                {error && (
+                <div className="error-banner">
+                    <p>⚠️ {error}</p>
+                    <button onClick={() => window.location.reload()}>
+                        Try Again
+                    </button>
+                </div>
+                )}
+
+                {/* display products after done loading and no error */}
+                {!loading && !error && (    
+                    <>
+                        <p className="result-count">{filtered.length} product(s) found</p>
+
+                        <div className="product-grid">
+                            {filtered.map(p => (
+                                <div key={p.id} className="product-card">
+                                    <h3>{p.name}</h3>
+                                    <p className="price">${p.price.toFixed(2)}</p>
+                                    <p className="meta">{p.type} | {p.brand}</p>
+                                    <p className="meta">📍 {p.location}</p>
+                                    <p className={p.stock > 0 ? "stock-badge" : "out-of-stock"}>
+                                        {p.stock > 0 ? `In Stock (${p.stock})` : "Out of Stock"}
+                                    </p>
+                                    <button
+                                        className="add-btn"
+                                        disabled={p.stock === 0}
+                                        onClick={() => handleAdd(p)}
+                                    >
+                                        {p.stock > 0 ? "Add to Cart" : "Unavailable"}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     )

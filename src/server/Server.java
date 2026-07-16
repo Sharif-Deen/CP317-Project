@@ -9,6 +9,7 @@ public class Server {
         server.createContext("/api/products", new ProductHandler());
         server.createContext("/api/login", new LoginHandler());
         // server.createContext("/api/signup", new SignUpHandler());
+        // server.createContext("/api/orders", new OrdersHandler());
         
         server.setExecutor(null);
         server.start();
