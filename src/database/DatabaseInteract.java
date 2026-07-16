@@ -27,7 +27,7 @@ import java.util.List;
 public class DatabaseInteract implements AutoCloseable {
 
     // SQLite database file that is used.
-    private static final String DATABASE_FILE = "laurierFS.db";
+    private static final String DATABASE_FILE = "src/database/laurierFS.db";
     // Live JDBC connection shared by every method.
     private final Connection connection;
     // Database path.

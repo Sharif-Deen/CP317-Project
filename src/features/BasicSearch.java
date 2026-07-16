@@ -10,11 +10,6 @@ public class BasicSearch {
 
     private List<Product> products = new ArrayList<>();
 
-    public static ArrayList<Product> searchProducts(String search, double minPrice, double maxPrice, String location, int stock){
-        ArrayList<Product> results = new ArrayList<Product>();
-        
-        return results;
-    }
 
     public void loadProducts(String filePath) {
         try {

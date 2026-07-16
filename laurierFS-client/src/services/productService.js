@@ -1,5 +1,11 @@
 import products from "../data/products"
+const BASE_URL = "http://localhost:8080"
 
-export const getProducts = () => {return products}
-export const getProductById = (id) => {return products.find(product => product.id===id)}
+export const getDummyProducts = () => {return products}
+
+export const getProducts = async () => {
+  const response = await fetch(`${BASE_URL}/api/products`)
+  const data = await response.json()
+  return data
+}
 
