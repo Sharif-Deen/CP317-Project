@@ -15,6 +15,7 @@ public class ReorderShortcut {
         PreviousOrder order1 = new PreviousOrder("1001");
 
         order1.addItem(new Product(
+                1, 
                 "Bulk Roma Tomatoes",
                 24.50,
                 "food",
@@ -26,6 +27,7 @@ public class ReorderShortcut {
         ), 2);
 
         order1.addItem(new Product(
+                2, 
                 "Organic White Rice 20kg",
                 39.99,
                 "food",
@@ -39,6 +41,7 @@ public class ReorderShortcut {
         PreviousOrder order2 = new PreviousOrder("1002");
 
         order2.addItem(new Product(
+                3, 
                 "Frozen Chicken Breast 10kg",
                 79.99,
                 "food",
@@ -50,6 +53,7 @@ public class ReorderShortcut {
         ), 3);
 
         order2.addItem(new Product(
+                4, 
                 "Olive Oil 5L",
                 32.75,
                 "food",

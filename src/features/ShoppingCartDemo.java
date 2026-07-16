@@ -16,6 +16,7 @@ public class ShoppingCartDemo {
         ArrayList<Product> products = new ArrayList<>();
 
         products.add(new Product(
+                1,
                 "Bulk Roma Tomatoes",
                 24.50,
                 "food",
@@ -27,6 +28,7 @@ public class ShoppingCartDemo {
         ));
 
         products.add(new Product(
+                2, 
                 "Frozen Chicken Breast 10kg",
                 79.99,
                 "food",
@@ -38,6 +40,7 @@ public class ShoppingCartDemo {
         ));
 
         products.add(new Product(
+                3,
                 "Organic White Rice 20kg",
                 39.99,
                 "food",
@@ -49,6 +52,7 @@ public class ShoppingCartDemo {
         ));
 
         products.add(new Product(
+                4,
                 "Olive Oil 5L",
                 32.75,
                 "food",

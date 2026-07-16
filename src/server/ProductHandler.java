@@ -6,7 +6,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProductHandler implements HttpHandler {
@@ -21,24 +20,37 @@ public class ProductHandler implements HttpHandler {
         String requestMethod = exchange.getRequestMethod();
         
         if ("GET".equalsIgnoreCase(requestMethod)) {
-            //get all products from database
-            List<Product> products = new ArrayList<>();
+            //get and send all products from database
             try (DatabaseInteract db = new DatabaseInteract()) {
-                products = db.findAllProducts();
-            } catch (Exception e){
-                System.err.println(e);
-            }
-            //convert products to json objects array
-            String jsonResponse = gson.toJson(products);
-            
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
+                List<Product> products = db.findAllProducts();
 
-            // write to React
-            OutputStream os = exchange.getResponseBody();
-            os.write(jsonResponse.getBytes());
-            os.close();
+                //convert products to json objects array
+                String jsonResponse = gson.toJson(products);
+
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+                exchange.sendResponseHeaders(CORSUtil.STATUS_OK, jsonResponse.getBytes().length);
+
+                try(OutputStream os = exchange.getResponseBody()){
+                    os.write(jsonResponse.getBytes());
+                }
+
+            } catch (Exception e){ //return error message
+                System.err.println("Error fetching products: " + e.getMessage());
+                e.printStackTrace();
+                String jsonResponse = "{\"error\": \"Failed to retrieve products from the database.\"}";
+
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+                exchange.sendResponseHeaders(CORSUtil.STATUS_SERVER_ERR, jsonResponse.getBytes().length);
+            }
+            
         }
+        //TODO: handle POST request (add product to db), DELETE request (delete product from db)
+        else if ("POST".equalsIgnoreCase(requestMethod)){
+
+        } else if ("DELETE".equalsIgnoreCase(requestMethod)){
+            
+        }
+
     }
 
 }

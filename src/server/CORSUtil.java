@@ -4,6 +4,12 @@ import java.io.IOException;
 import com.sun.net.httpserver.Headers;
 
 public class CORSUtil {
+    //Status codes
+    public static final int STATUS_OK = 200;
+    public static final int STATUS_UNAUTHORIZED = 401;
+    public static final int STATUS_SERVER_ERR = 500;
+
+
     //static methods that set headers for communication with frontend
     public static void addCORSHeaders(HttpExchange exchange) {
         Headers headers = exchange.getResponseHeaders();
