@@ -15,6 +15,7 @@ public class BasicSearch {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
             String line;
+            int id = 1;
             while ((line = reader.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
 
@@ -30,7 +31,8 @@ public class BasicSearch {
                 String location = parts[6].trim();
                 int stock = Integer.parseInt(parts[7].trim());
 
-                products.add(new Product(name, price, type, brand, tags, description, location, stock));
+                products.add(new Product(id, name, price, type, brand, tags, description, location, stock));
+                id++;
             }
             reader.close();
         } catch (IOException e) {

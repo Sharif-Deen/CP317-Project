@@ -3,6 +3,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Product {
+    private int id;
     private String name;
     private double price;
     private String type;
@@ -12,7 +13,8 @@ public class Product {
     private String location;
     private int stock;
 
-    public Product(String name, double price, String type, String brand, String tags, String description, String location, int stock) {
+    public Product(int id, String name, double price, String type, String brand, String tags, String description, String location, int stock) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.type = type;
@@ -23,6 +25,7 @@ public class Product {
         this.stock = stock;
     }
 
+    public int getId() { return id; }
     public String getName() { return name; }
     public double getPrice() { return price; }
     public String getType() { return type; }
@@ -31,6 +34,8 @@ public class Product {
     public String getDescription() { return description; }
     public String getLocation() { return location; }
     public int getStock() { return stock; }
+
+    public void setid(int id) { this.id = id; }
 
     @Override
     public String toString() {

@@ -113,7 +113,7 @@ public class DatabaseInteract implements AutoCloseable {
         int stockQuantity = loadProductStock(productNumber);
         
         // Build Product object from row and related data.
-        product = new Product((String) resultRow.get("productName"), ((Number) resultRow.get("price")).doubleValue(), (String) resultRow.get("productCategory"), (String) resultRow.get("productBrand"), commaSeparatedTags, (String) resultRow.get("productShortDescription"), productLocation, stockQuantity);
+        product = new Product((int) resultRow.get("productNumber") ,(String) resultRow.get("productName"), ((Number) resultRow.get("price")).doubleValue(), (String) resultRow.get("productCategory"), (String) resultRow.get("productBrand"), commaSeparatedTags, (String) resultRow.get("productShortDescription"), productLocation, stockQuantity);
         
         return product;
     }
