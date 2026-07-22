@@ -1,0 +1,158 @@
+@import 'variables.css';
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 520px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.25s ease;
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-title {
+    font-size: 22px;
+    color: var(--primary);
+    margin: 0 0 16px 0;
+    padding-right: 30px;
+}
+
+.modal-price {
+    font-size: 26px;
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.modal-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.meta-item {
+    background: #f8f8f8;
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+.meta-label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 4px;
+}
+
+.meta-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.meta-value.in-stock {
+    color: #1e7e34;
+}
+
+.meta-value.no-stock {
+    color: #c0392b;
+}
+
+.modal-section {
+    margin-bottom: 16px;
+}
+
+.modal-section h4 {
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #999;
+    margin: 0 0 8px 0;
+}
+
+.modal-section p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-chip {
+    background: #f0e6ff;
+    color: var(--primary);
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.modal-add-btn {
+    width: 100%;
+    margin-top: 8px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 20px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+}
+
+.modal-add-btn:hover:not(:disabled) {
+    background: #4a0ba3;
+}
+
+.modal-add-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
