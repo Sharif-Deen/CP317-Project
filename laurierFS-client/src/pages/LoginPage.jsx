@@ -33,7 +33,7 @@ const LoginPage = ()=> {
             <Button className="login-btn" onClick={()=>{}} label="Sign Up" type="button"></Button>
             <a href="#">Forgot Password?</a>
             <a href="#">Continue as Guest</a>
-            <a href="#">Distributor Login Page</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); navigate("/distributor-login") }}>Distributor Login Page</a>
         </div>
     </div>
 )}

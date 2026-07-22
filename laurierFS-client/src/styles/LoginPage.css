@@ -101,3 +101,13 @@ a {
 }.show-btn:active{
   color:#b88100;
 }
+
+.distributor-label {
+  background: var(--accent);
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 4px 16px;
+  border-radius: 14px;
+  margin: 0;
+}

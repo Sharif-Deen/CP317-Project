@@ -397,3 +397,36 @@
 .profile-btn:hover {
     background: var(--accent);
 }
+
+.discount-row {
+    color: #1e7e34;
+    font-weight: 600;
+}
+
+.receipt-discount {
+    color: #1e7e34;
+}
+
+.receipt-order-id {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 8px;
+    font-family: monospace;
+}
+
+.receipt-btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    justify-content: center;
+}
+
+.receipt-btn-row .checkout-btn {
+    width: auto;
+    padding: 12px 24px;
+}
+
+.receipt-btn-row .checkout-btn-back {
+    width: auto;
+    padding: 12px 24px;
+}
