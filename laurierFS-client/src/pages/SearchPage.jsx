@@ -3,6 +3,7 @@ import { getProducts } from "../services/productService"
 import { useNavigate } from "react-router-dom"
 import { useCart } from "../context/CartContext"
 import Logo from "../components/Logo.jsx"
+import ProductDetailModal from "../components/ProductDetailModal.jsx"
 import "../styles/SearchPage.css"
 
 const SearchPage = () => {
@@ -13,6 +14,7 @@ const SearchPage = () => {
     const [allProducts, setAllProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [selectedProduct, setSelectedProduct] = useState(null)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -69,6 +71,9 @@ const SearchPage = () => {
                 </div>
                 <span className="header-tagline">Serving the Waterloo Region</span>
                 <div className="header-right">
+                    <button className="cart-btn" onClick={() => navigate("/orders")}>
+                        📋 Orders
+                    </button>
                     <button className="cart-btn" onClick={() => navigate("/cart")}>
                         🛒 Cart <span className="cart-count">{cartCount}</span>
                     </button>
@@ -79,6 +84,18 @@ const SearchPage = () => {
             </header>
 
             {toast && <div className="toast">✓ {toast}</div>}
+
+            {/* Product Detail Modal */}
+            {selectedProduct && (
+                <ProductDetailModal
+                    product={selectedProduct}
+                    onClose={() => setSelectedProduct(null)}
+                    onAddToCart={(p) => {
+                        handleAdd(p)
+                        setSelectedProduct(null)
+                    }}
+                />
+            )}
 
             <div className="search-body">
                 <input
@@ -137,13 +154,13 @@ const SearchPage = () => {
                 )}
 
                 {/* display products after done loading and no error */}
-                {!loading && !error && (    
+                {!loading && !error && (
                     <>
                         <p className="result-count">{filtered.length} product(s) found</p>
 
                         <div className="product-grid">
                             {filtered.map(p => (
-                                <div key={p.id} className="product-card">
+                                <div key={p.id} className="product-card" onClick={() => setSelectedProduct(p)} style={{ cursor: "pointer" }}>
                                     <h3>{p.name}</h3>
                                     <p className="price">${p.price.toFixed(2)}</p>
                                     <p className="meta">{p.type} | {p.brand}</p>
@@ -154,7 +171,7 @@ const SearchPage = () => {
                                     <button
                                         className="add-btn"
                                         disabled={p.stock === 0}
-                                        onClick={() => handleAdd(p)}
+                                        onClick={(e) => { e.stopPropagation(); handleAdd(p) }}
                                     >
                                         {p.stock > 0 ? "Add to Cart" : "Unavailable"}
                                     </button>

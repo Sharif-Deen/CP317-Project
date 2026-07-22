@@ -247,3 +247,22 @@
 .profile-btn:hover {
     background: var(--accent);
 }
+
+.bulk-discount-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1e7e34;
+    margin: 4px 0 0 0;
+}
+
+.bulk-hint {
+    font-size: 11px;
+    color: #e67e22;
+    margin: 4px 0 0 0;
+    font-style: italic;
+}
+
+.discount-row {
+    color: #1e7e34;
+    font-weight: 600;
+}
