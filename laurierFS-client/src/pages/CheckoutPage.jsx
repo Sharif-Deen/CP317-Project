@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useOrders } from "../context/OrderContext";
 import Logo from "../components/Logo";
 import "../styles/CheckoutPage.css";
 
@@ -8,7 +9,8 @@ const TAX_RATE = 0.13;
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const { items, clearCart, cartTotal } = useCart();
+  const { items, clearCart, cartTotal, bulkDiscount } = useCart();
+  const { placeOrder } = useOrders();
 
   const [step, setStep] = useState(1);
 
@@ -22,10 +24,12 @@ export default function CheckoutPage() {
 
   const [errors, setErrors] = useState({});
   const [placedOrder, setPlacedOrder] = useState(null);
-  const tax = cartTotal * TAX_RATE;
-  const total = cartTotal + tax;
 
-const validateShipping = () => {
+  const discountedSubtotal = cartTotal - bulkDiscount;
+  const tax = discountedSubtotal * TAX_RATE;
+  const total = discountedSubtotal + tax;
+
+  const validateShipping = () => {
     const e = {};
     if (!shipping.fullName.trim()) e.fullName = "Full name is required";
     if (!shipping.address.trim()) e.address = "Address is required";
@@ -47,18 +51,24 @@ const validateShipping = () => {
   };
 
   const handleShippingNext = () => { if (validateShipping()) setStep(2); };
- const handlePlaceOrder = () => {
+
+  const handlePlaceOrder = () => {
     if (validatePayment()) {
-      setPlacedOrder({
+      const order = placeOrder({
         items: items,
         subtotal: cartTotal,
+        discount: bulkDiscount,
         tax: tax,
         total: total,
+        shipping: { ...shipping },
+        payment: { method: payment.method, lastFour: payment.cardNumber.slice(-4) },
       });
+      setPlacedOrder(order);
       clearCart();
       setStep(3);
     }
   };
+
   if (items.length === 0 && step !== 3) {
     return (
       <div className="checkout-page">
@@ -71,7 +81,7 @@ const validateShipping = () => {
         </div>
         <div className="checkout-content">
           <div className="empty-checkout">
-            <p>🛒 Your cart is empty</p>
+            <p>Your cart is empty</p>
             <button className="checkout-btn" onClick={() => navigate("/search")}>Browse Products</button>
           </div>
         </div>
@@ -185,11 +195,12 @@ const validateShipping = () => {
               </div>
             )}
 
-            {step === 3 && (
+            {step === 3 && placedOrder && (
               <div className="checkout-card receipt-card">
                 <div className="receipt-check">✓</div>
                 <h3 className="receipt-title">Order Confirmed!</h3>
                 <p className="receipt-subtitle">Thank you, {shipping.fullName}!</p>
+                <p className="receipt-order-id">Order ID: {placedOrder.id}</p>
                 <div className="receipt-divider" />
                 <h4 className="receipt-section-title">Deliver To</h4>
                 <p className="receipt-info">{shipping.fullName}</p>
@@ -203,15 +214,24 @@ const validateShipping = () => {
                 </p>
                 <div className="receipt-divider" />
                 <h4 className="receipt-section-title">Order Summary</h4>
-                {placedOrder && placedOrder.items.map(({ product, quantity }) => (
+                {placedOrder.items.map(({ product, quantity }) => (
                   <div key={product.id} className="receipt-item">
                     <span>{product.name} x{quantity}</span>
                     <span>${(product.price * quantity).toFixed(2)}</span>
                   </div>
                 ))}
-                <div className="receipt-item"><span>HST (13%)</span><span>${placedOrder ? placedOrder.tax.toFixed(2) : "0.00"}</span></div>
-                <div className="receipt-item receipt-total"><span>Total</span><span>${placedOrder ? placedOrder.total.toFixed(2) : "0.00"}</span></div>
-                <button className="checkout-btn" onClick={() => navigate("/search")}>Continue Shopping</button>
+                {placedOrder.discount > 0 && (
+                  <div className="receipt-item receipt-discount">
+                    <span>Bulk Discount</span>
+                    <span>-${placedOrder.discount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="receipt-item"><span>HST (13%)</span><span>${placedOrder.tax.toFixed(2)}</span></div>
+                <div className="receipt-item receipt-total"><span>Total</span><span>${placedOrder.total.toFixed(2)}</span></div>
+                <div className="receipt-btn-row">
+                  <button className="checkout-btn" onClick={() => navigate("/orders")}>View Orders</button>
+                  <button className="checkout-btn-back" onClick={() => navigate("/search")}>Continue Shopping</button>
+                </div>
               </div>
             )}
 
@@ -231,6 +251,9 @@ const validateShipping = () => {
               ))}
               <div className="summary-divider" />
               <div className="summary-row"><span>Subtotal</span><span>${cartTotal.toFixed(2)}</span></div>
+              {bulkDiscount > 0 && (
+                <div className="summary-row discount-row"><span>Bulk Discount</span><span>-${bulkDiscount.toFixed(2)}</span></div>
+              )}
               <div className="summary-row"><span>HST (13%)</span><span>${tax.toFixed(2)}</span></div>
               <div className="summary-row summary-total"><span>Total</span><span>${total.toFixed(2)}</span></div>
             </div>
