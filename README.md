@@ -33,3 +33,9 @@ java -cp "lib/*:bin" server.Server
 ### Alternative: IDE Execution (VS Code)
 
 If you are using __VS Code__ with the __Extension Pack for Java__ or __Code Runner__ installed, open `src/server/Server.java` and click the `Run` button directly above the `main()` method.
+
+## Running the Client
+
+```bash
+npm --prefix laurierFS-client run dev -- --open
+```
