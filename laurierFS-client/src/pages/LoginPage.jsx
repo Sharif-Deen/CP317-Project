@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"
+import {FaEye, FaEyeSlash} from "react-icons/fa"
 import Button from "../components/Button.jsx"
 import InputField from "../components/InputField.jsx"
 import Logo from "../components/Logo.jsx"
 import "../styles/LoginPage.css"
-import { useNavigate } from "react-router-dom"
 import { login } from "../services/authService"
 
 const LoginPage = ()=> {
@@ -21,19 +22,18 @@ const LoginPage = ()=> {
     <div className="login-page">
         <div className="login-card">
             <Logo></Logo>
-            <InputField label="Email" type="email" placeholder="" onChange={(e)=> setEmail(e.target.value)} value={email}></InputField>
+            <InputField type="text" placeholder="Username or Email" onChange={(e)=> setEmail(e.target.value)} value={email}></InputField>
             <div className="password-wrapper">
-                <div className="password-header">
-                    <label>Password</label>
-                    <Button className="show-btn" label={showpassword?"Hide":"Show"} onClick={()=>setShowPassword(!showpassword)} type="button"></Button>
-                </div>
-                <InputField type={showpassword ? "text" : "password"} placeholder="" onChange={(e)=> setPassword(e.target.value)} value={password}></InputField>
+                <InputField type={showpassword ? "text" : "password"} placeholder="Password" onChange={(e)=> setPassword(e.target.value)} value={password}></InputField>
+                
+                <button className="show-btn" onClick={()=>setShowPassword(!showpassword)} onMouseDown={(e)=>e.preventDefault()} type="button">{showpassword?<FaEyeSlash size={18}/>:<FaEye size={18}/>}</button>
+                
             </div>
             <Button className="login-btn" onClick={handleLogin} label="Login" type="button"></Button>
+            <div>OR</div>
             <Button className="login-btn" onClick={()=>{}} label="Sign Up" type="button"></Button>
             <a href="#">Forgot Password?</a>
             <a href="#">Continue as Guest</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate("/distributor-login") }}>Distributor Login Page</a>
         </div>
     </div>
 )}
