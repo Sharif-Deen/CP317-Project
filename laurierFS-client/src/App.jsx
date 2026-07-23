@@ -26,7 +26,6 @@ function App() {
             <Route path="/distributor-login" element={<DistributorLoginPage />} />
             <Route path="/distributor-dashboard" element={<DistributorDashboardPage />} />
             
-            <Route path="/admin" element={<div>Admin Page Coming Soon</div>} />
           </Routes>
         </BrowserRouter>
       </CartProvider>
