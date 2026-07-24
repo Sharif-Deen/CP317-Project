@@ -13,7 +13,9 @@ const DistributorLoginPage = () => {
 
     const handleLogin = () => {
         // TODO: add distributor auth logic
-        navigate("/search")
+        
+        // This pushes the user to the new dashboard route!
+        navigate("/distributor-dashboard")
     }
 
     return (

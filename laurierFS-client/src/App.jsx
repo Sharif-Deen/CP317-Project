@@ -4,6 +4,7 @@ import CartPage from "./pages/CartPage"
 import CheckoutPage from "./pages/CheckoutPage"
 import OrdersPage from "./pages/OrdersPage"
 import DistributorLoginPage from "./pages/DistributorLoginPage"
+import DistributorDashboardPage from './pages/DistributorDashboardPage';
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { CartProvider } from "./context/CartContext"
 import { OrderProvider } from "./context/OrderContext"
@@ -21,6 +22,8 @@ function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/distributor-login" element={<DistributorLoginPage />} />
+            <Route path="/distributor-dashboard" element={<DistributorDashboardPage />} />
+            
             <Route path="/admin" element={<div>Admin Page Coming Soon</div>} />
           </Routes>
         </BrowserRouter>
