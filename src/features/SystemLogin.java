@@ -152,7 +152,7 @@ public class SystemLogin {
             return;
         }
 
-        User user = new User(username, password, category, email);
+        User user = new User(1, username, password, category, email);
         pManager.UserInformation(user);
         
     }

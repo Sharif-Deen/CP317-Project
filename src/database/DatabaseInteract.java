@@ -561,7 +561,7 @@ public class DatabaseInteract implements AutoCloseable {
                 String userType = resultRow.get("userType") == null ? "customer" : String.valueOf(resultRow.get("userType"));
                 
                 // Build User object from row and assign to user.
-                user = new User((String) resultRow.get("username"), (String) resultRow.get("userPassword"), userType, (String) resultRow.get("email"));
+                user = new User((int) resultRow.get("accountNumber"), (String) resultRow.get("username"), (String) resultRow.get("userPassword"), userType, (String) resultRow.get("email"));
             }
 
         // If user lookup failed, print error message.
@@ -585,7 +585,7 @@ public class DatabaseInteract implements AutoCloseable {
         Order order = null;
 
         // Build Order object from row.
-        order = new Order(((String) resultRow.get("email"), (String) resultRow.get("phone"), ((Number) resultRow.get("totalPrice")).doubleValue(), (String) resultRow.get("orderDate"), (String) resultRow.get("orderStatus"), (String) resultRow.get("deliveryDate"));
+        order = new Order((int) resultRow.get("orderNumber"), (String) resultRow.get("email"), (String) resultRow.get("phone"), ((Number) resultRow.get("totalPrice")).doubleValue(), (String) resultRow.get("orderDate"), (String) resultRow.get("orderStatus"), (String) resultRow.get("deliveryDate"));
         
         return order;
     }
@@ -602,7 +602,7 @@ public class DatabaseInteract implements AutoCloseable {
         try { String insertOrderQuery = "INSERT INTO \"order\" " + "(email, phone, totalPrice, orderDate, orderStatus, deliveryDate) " + "VALUES (?, ?, ?, ?, ?, ?)";
             
             // Get new orderNumber for inserted order.
-            insertedOrderNumber = runCustomUpdate(insertOrderQuery, order.getEmail(), order.getPhone(), order.getTotalPrice(), order.getOrderDate(), order.getOrderStatus().name(), order.getDeliveryDate());
+            insertedOrderNumber = runCustomUpdate(insertOrderQuery, order.getEmail(), order.getPhone(), order.getTotalPrice(), order.getOrderDate(), order.getOrderStatus(), order.getDeliveryDate());
         
         // If order insertion failed, print error message.
         } catch (SQLException sqlException) {
@@ -732,11 +732,11 @@ public class DatabaseInteract implements AutoCloseable {
 
 
     // Finds orders by product brands.
-    public List<Order> findOrdersByEmail(String email) {
+    public List<Order> findOrdersByBrand(String email) {
 
         //Will do this soon -Sharif.
-
-        return;
+        List<Order> tempList = new ArrayList<Order>(); //just added this to remove the error. delete when implementing this function.
+        return tempList;
     }
 
 }
