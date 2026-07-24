@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
     UNIQUE(email, phone)
 );
 
-CREATE TABLE IF NOT EXISTS orders (
+CREATE TABLE IF NOT EXISTS order (
     orderNumber INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL,
     phone TEXT NOT NULL,
