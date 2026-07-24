@@ -1,8 +1,8 @@
-const InputField = (props) => {
+const InputField = ({label, className='', ...rest}) => {
     return(
-        <div className="input-field-wrapper">
-            {props.label && <label>{props.label}</label>}
-            <input type={props.type} placeholder={props.placeholder} onChange={props.onChange} value={props.value}></input>
+        <div className={`input-field-wrapper ${className}`}>
+            {label && <label>{label}</label>}
+            <input {...rest}/>
         </div>
     )
 }
