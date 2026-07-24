@@ -1,2 +1,3 @@
 automatedAdmin,11af663e8e57b112629e3cc4ba3b02d653d7807838285874d69fe660c84db9d0,admin,admin@laurier.com
 Admin1,11af663e8e57b112629e3cc4ba3b02d653d7807838285874d69fe660c84db9d0,admin,admin@laurier.com
+distributor@laurier.com,2c0a162281d87ac595118c7440d97f2f8bda0ddd82f8e650cdd5a706b7803d6e,distributor,distributor@laurier.com
