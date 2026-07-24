@@ -13,14 +13,16 @@ import java.util.List;
 //  =================
 
 public class Order {
+    private int id;
     private String email;
     private String phone;
     private double totalPrice;
     private String orderDate;    // stored as text in DB 
-    private OrderStatus orderStatus;
+    private String orderStatus;
     private String deliveryDate; // may be null
 
-    public Order(String email, String phone, double totalPrice, String orderDate, OrderStatus orderStatus, String deliveryDate) {
+    public Order(int id, String email, String phone, double totalPrice, String orderDate, String orderStatus, String deliveryDate) {
+        this.id = id;
         this.email = email;
         this.phone = phone;
         this.totalPrice = totalPrice;
@@ -32,6 +34,7 @@ public class Order {
     }
 
     // Getters
+    public int getId() {return id;}
     public String getEmail() { 
         return email; 
     }
@@ -48,7 +51,7 @@ public class Order {
         return orderDate; 
     }
 
-    public OrderStatus getOrderStatus() { 
+    public String getOrderStatus() { 
         return orderStatus; 
     }
 
@@ -85,6 +88,6 @@ public class Order {
     // Override toString method for easy printing of order details.
     @Override
     public String toString() {
-        return "Order #" + orderNumber + " | " + email + " | " + phone + " | $" + totalPrice + " | " + orderStatus;
+        return "Order #" + id + " | " + email + " | " + phone + " | $" + totalPrice + " | " + orderStatus;
     }
 }

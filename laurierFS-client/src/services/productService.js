@@ -9,3 +9,19 @@ export const getProducts = async () => {
   return data
 }
 
+export const addProduct = async (product) => {
+  const response = await fetch(`${BASE_URL}/api/products`, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(product)
+  })
+  return await response.json()
+}
+
+export const deleteProduct = async (productId) => {
+  const response = await fetch(`${BASE_URL}/api/products`, {
+    method: "DELETE",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({id: productId})
+  })
+}
