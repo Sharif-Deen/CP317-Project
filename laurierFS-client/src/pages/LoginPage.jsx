@@ -5,11 +5,20 @@ import Button from "../components/Button.jsx"
 import InputField from "../components/InputField.jsx"
 import Logo from "../components/Logo.jsx"
 import "../styles/LoginPage.css"
-import { login } from "../services/authService"
+import { login, signup } from "../services/authService"
+import { useAuth } from "../context/AuthContext.jsx"
+
+const ROLE_ROUTES = {
+    distributor: "/distributor-dashboard",
+    customer: "/search",
+}
+
 
 const LoginPage = ()=> {
     const [showpassword, setShowPassword] = useState(false)
     const [isSignUp, setIsSignUp] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [error, setError] = useState("")
     const [formData, setFormData] = useState({
         identifier: '',
         username: '',
@@ -18,6 +27,7 @@ const LoginPage = ()=> {
         confirmPassword: ''
     })
     const navigate = useNavigate()
+    const { setLoggedInUser } = useAuth()
 
     const handleChange = (e) =>{
         setFormData({
@@ -25,15 +35,43 @@ const LoginPage = ()=> {
             [e.target.name]: e.target.value
         })
     }
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         if (e) e.preventDefault();
+        setError("")
 
-        const result = login(email, password)
-        result.role==="admin"?navigate("/admin"):navigate("/search")
+        if (isSignUp && formData.password !== formData.confirmPassword) {
+            setError("Passwords do not match")
+            return
+        }
+        try {
+            const result = isSignUp
+                ? await signup({
+                    username: formData.username,
+                    email: formData.email,
+                    password: formData.password,
+                })
+                : await login({
+                    identifier: formData.identifier,
+                    password: formData.password,
+                })
+ 
+            // Persist who's logged in via context (which itself syncs to
+            // localStorage, so it survives refreshes/new tabs).
+            setLoggedInUser(result)
+ 
+            const destination = ROLE_ROUTES[result.role] ?? "/"
+            navigate(destination)
+        } catch (err) {
+            setError(err?.message || "Something went wrong. Please try again.")
+        } finally {
+            setIsSubmitting(false)
+        }
+
     }
     const toggleAuth = (e) =>{
         e.preventDefault()
         setIsSignUp(!isSignUp)
+        setError("")
         setFormData({
             identifier: '',
             username: '',
@@ -72,6 +110,7 @@ const LoginPage = ()=> {
                         <button className="show-btn" onClick={()=>setShowPassword(!showpassword)} onMouseDown={(e)=>e.preventDefault()} type="button">{showpassword?<FaEyeSlash size={18}/>:<FaEye size={18}/>}</button>
                     </div>
                 }
+                {error && <div className="auth-error">{error}</div>}
 
                 {/* Submit button */}
                 <Button className="login-btn" onClick={handleSubmit} label={isSignUp?"Sign Up":"Login"} type="submit"></Button>
