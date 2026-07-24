@@ -6,7 +6,7 @@ import java.io.FileReader;
 
 public class PasswordManager {
 
-    private final String MyFile = "accounts.txt";
+    private final String MyFile = "src/features/accounts.txt";
     
     /*
      * New implimentation to check user email validity. 
