@@ -6,6 +6,8 @@ package database;
 
 import features.Product;        // For Product objects.
 import features.User;           // For User objects.
+import features.Order;          // For Order objects.
+import features.OrderStatus;    // For OrderStatus enum.
 import java.nio.file.Path;          // For file paths.
 import java.nio.file.Paths;         // For file Path Objects.
 import java.sql.Connection;         // For active links to the database.
@@ -55,6 +57,7 @@ public class DatabaseInteract implements AutoCloseable {
             throw new IllegalStateException(
                     "Unable to connect to database: " + sqlException.getMessage(),sqlException);
         }
+    return;
     }
 
 
@@ -567,4 +570,173 @@ public class DatabaseInteract implements AutoCloseable {
         }
         return user;
     }
+
+
+    // =================
+    //   ORDER METHODS:
+    // =================
+
+    // Builds Order object from database row.
+    // Parameters: resultRow - Map of column names to values for order row.
+    // Returns: Order object built from the row.
+    private Order buildOrderFromRow(Map<String, Object> resultRow) throws SQLException {
+        
+        // Order object to return.
+        Order order = null;
+
+        // Build Order object from row.
+        order = new Order(((String) resultRow.get("email"), (String) resultRow.get("phone"), ((Number) resultRow.get("totalPrice")).doubleValue(), (String) resultRow.get("orderDate"), (String) resultRow.get("orderStatus"), (String) resultRow.get("deliveryDate"));
+        
+        return order;
+    }
+
+
+    // Inserts new order row into database.
+    // Parameters: order - Order object to insert into database.
+    // Returns: new orderNumber when successful, -1 when failed.
+    public int addOrder(Order order) {
+        // Order number to return.
+        int insertedOrderNumber = -1;
+
+        // Insert order row into database.
+        try { String insertOrderQuery = "INSERT INTO \"order\" " + "(email, phone, totalPrice, orderDate, orderStatus, deliveryDate) " + "VALUES (?, ?, ?, ?, ?, ?)";
+            
+            // Get new orderNumber for inserted order.
+            insertedOrderNumber = runCustomUpdate(insertOrderQuery, order.getEmail(), order.getPhone(), order.getTotalPrice(), order.getOrderDate(), order.getOrderStatus().name(), order.getDeliveryDate());
+        
+        // If order insertion failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to add order: " + sqlException.getMessage());
+        }
+        return insertedOrderNumber;
+    }
+
+
+    // Finds one order by orderNumber.
+    // Parameters: orderNumber - order number to find.
+    // Returns: Order object when found, null when not found or on error.
+    public Order findOrderByNumber(int orderNumber) {
+        // Order object to return.
+        Order foundOrder = null;
+
+        // Query database for matching order row.
+        try { List<Map<String, Object>> queryResults = runCustomQuery("SELECT orderNumber, email, phone, totalPrice, orderDate, orderStatus, deliveryDate FROM \"order\" WHERE orderNumber = ? LIMIT 1", orderNumber);
+
+            // If order row found, build Order object.
+            if (!queryResults.isEmpty()) {
+                // Get the first row from the query results.
+                Map<String, Object> resultRow = queryResults.get(0);
+                // Build Order object from row and assign to foundOrder.
+                foundOrder = buildOrderFromRow(resultRow);
+            }
+
+        // If order lookup failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to find order: " + sqlException.getMessage());
+        }
+        return foundOrder;
+    }
+
+
+    // Finds orders by customer email.
+    // Parameters: email - Email address to look up orders for.
+    // Returns: List of Order objects, empty list if none found.
+    public List<Order> findOrdersByEmail(String email) {
+        // List to store orders found for the email.
+        List<Order> orderList = new ArrayList<>();
+        // currentOrder object to hold each order as its built.
+        Order currentOrder = null;
+
+        // Query database for matching order rows.
+        try {List<Map<String, Object>> queryResults = runCustomQuery("SELECT orderNumber, email, phone, totalPrice, orderDate, orderStatus, deliveryDate FROM \"order\" WHERE email = ? ORDER BY orderDate DESC", email);
+            
+            // For each row in query results, build Order object and add to list.
+            for (Map<String, Object> resultRow : queryResults) {
+                currentOrder = buildOrderFromRow(resultRow);
+                orderList.add(currentOrder);
+            }
+
+        // If order lookup failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to load orders for email: " + sqlException.getMessage());
+            orderList = new ArrayList<>();
+        }
+        return orderList;
+    }
+
+
+    // Finds all orders in database.
+    // Parameters: none
+    // Returns: List of Order objects, empty list if none found.
+    public List<Order> findAllOrders() {
+        // List to store all orders found in database.
+        List<Order> orderList = new ArrayList<>();
+        // currentOrder object to hold each order as its built.
+        Order currentOrder = null;
+
+        // Query database for all order rows, ordered by orderDate descending.
+        try {List<Map<String, Object>> queryResults = runCustomQuery("SELECT orderNumber, email, phone, totalPrice, orderDate, orderStatus, deliveryDate FROM \"order\" ORDER BY orderDate DESC");
+            
+            // For each row in query results, build Order object and add to list.
+            for (Map<String, Object> resultRow : queryResults) {
+                currentOrder = buildOrderFromRow(resultRow);
+                orderList.add(currentOrder);
+            }
+
+        // If order lookup failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to load orders: " + sqlException.getMessage());
+            orderList = new ArrayList<>();
+        }
+        return orderList;
+    }
+
+
+    // Updates the status of an existing order.
+    // Parameters: orderNumber - The order number to update.
+    // Parameters: newStatus - New status enum value to set.
+    // Returns: true when successful, false when failed.
+    public boolean updateOrderStatus(int orderNumber, OrderStatus newStatus) {
+        // Flag to indicate if order status was updated successfully.
+        boolean success = false;
+
+        // Update order status in database.
+        try { int updatedRows = runCustomUpdate("UPDATE \"order\" SET orderStatus = ? WHERE orderNumber = ?", newStatus.name(), orderNumber);
+            success = updatedRows > 0;
+
+        // If order status update failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to update order status: " + sqlException.getMessage());
+        }
+        return success;
+    }
+
+
+    // Removes order from database by orderNumber.
+    // Parameters: orderNumber - Order number to remove.
+    // Returns: true when successful, false when failed.
+    public boolean removeOrderByNumber(int orderNumber) {
+        // Flag to indicate if order was removed successfully.
+        boolean success = false;
+
+        // Delete order row from database.
+        try { int deleted = runCustomUpdate("DELETE FROM \"order\" WHERE orderNumber = ?", orderNumber);
+            success = deleted > 0;
+
+        // If order removal failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to remove order: " + sqlException.getMessage());
+        }
+        return success;
+    }
+
+
+    // Finds orders by product brands.
+    public List<Order> findOrdersByEmail(String email) {
+
+        //Will do this soon -Sharif.
+
+        return;
+    }
+
 }
