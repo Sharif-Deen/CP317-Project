@@ -154,6 +154,16 @@
     color: #1f2937;
 }
 
+.dashboard-error {
+    color: #b91c1c;
+    background-color: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    margin: 0 0 1rem 0;
+}
+
 /* Table Styles */
 .table-container {
     overflow-x: auto;

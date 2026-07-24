@@ -514,6 +514,28 @@ public class DatabaseInteract implements AutoCloseable {
     }
 
 
+    // Removes product from database by productNumber, along with tags and stock.
+    // Parameters: productNumber - Number of product to remove.
+    // Returns: true when successful, false when failed.
+    public boolean removeProductById(int productNumber) {
+        // Flag to indicate if product was removed successfully.
+        boolean success = false;
+
+        // Delete product row, along with tags and stock.
+        try {
+            runCustomUpdate("DELETE FROM productTag WHERE productNumber = ?", productNumber);
+            runCustomUpdate("DELETE FROM productStock WHERE productNumber = ?", productNumber);
+            int affectedRows = runCustomUpdate("DELETE FROM product WHERE productNumber = ?", productNumber);
+
+            success = affectedRows > 0;
+        // If product removal failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to remove product: " + sqlException.getMessage());
+        }
+        return success;
+    }
+
+
     // =================
     //   USER METHODS:
     // =================
