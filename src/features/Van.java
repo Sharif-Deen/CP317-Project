@@ -1,3 +1,5 @@
+package features;
+
 public class Van {
     private final String vanID; 
     private Node currNode;   //This is the location of the node that the van is at. 
