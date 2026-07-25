@@ -5,8 +5,8 @@ export const getDummyProducts = () => {return products}
 
 export const getProducts = async () => {
   const response = await fetch(`${BASE_URL}/api/products`)
-  const data = await response.json()
-  return data
+  if (!response.ok) throw new Error("Failed to fetch products")
+  return await response.json()
 }
 
 export const addProduct = async (product) => {
@@ -15,7 +15,9 @@ export const addProduct = async (product) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(product)
   })
-  return await response.json()
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.message || "Failed to add product")
+  return data
 }
 
 export const deleteProduct = async (productId) => {
@@ -24,4 +26,7 @@ export const deleteProduct = async (productId) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({id: productId})
   })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.message || "Failed to delete product")
+  return data
 }
