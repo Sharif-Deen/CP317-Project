@@ -8,6 +8,7 @@ import DistributorDashboardPage from './pages/DistributorDashboardPage';
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { CartProvider } from "./context/CartContext"
 import { OrderProvider } from "./context/OrderContext"
+import ProductReturnsPage from "./pages/ProductReturnsPage";
 
 function App() {
   return (
