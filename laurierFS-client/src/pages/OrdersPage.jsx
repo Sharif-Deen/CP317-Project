@@ -114,21 +114,38 @@ const OrdersPage = () => {
                                         <span className="order-total">Total: ${order.total.toFixed(2)}</span>
                                     </div>
                                     <div className="order-actions">
-                                        <button
-                                            className="reorder-btn"
-                                            onClick={() => handleReorder(order)}
-                                        >
-                                            Reorder
-                                        </button>
-                                        {order.status === "confirmed" && (
-                                            <button
-                                                className="cancel-order-btn"
-                                                onClick={() => setConfirmCancel(order.id)}
-                                            >
-                                                Cancel Order
-                                            </button>
-                                        )}
-                                    </div>
+    <button 
+        className="reorder-btn"
+        onClick={() => handleReorder(order)}
+    >
+        Reorder
+    </button>
+
+    {order.status === "confirmed" && (
+        <>
+            <button
+                className="return-order-btn"
+                onClick={() =>
+                    navigate("/returns", {
+                        state: {
+                            orderId: order.id,
+                            items: order.items
+                        }
+                    })
+                }
+            >
+                Return Product
+            </button>
+
+            <button
+                className="cancel-order-btn"
+                onClick={() => setConfirmCancel(order.id)}
+            >
+                Cancel Order
+            </button>
+        </>
+    )}
+</div>
                                 </div>
                             </div>
                         ))}
