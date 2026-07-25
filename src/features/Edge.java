@@ -1,3 +1,4 @@
+package features;
 
 public class Edge {
     //Node the edge connects TO. 
