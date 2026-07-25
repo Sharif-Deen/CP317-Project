@@ -281,6 +281,21 @@ public class DatabaseInteract implements AutoCloseable {
         return productNumber;
     }
 
+    
+    // Builds Order object from database row.
+    // Parameters: resultRow - Map of column names to values for order row.
+    // Returns: Order object built from the row.
+    private Order buildOrderFromRow(Map<String, Object> resultRow) throws SQLException {
+        
+        // Order object to return.
+        Order order = null;
+
+        // Build Order object from row.
+        order = new Order((int) resultRow.get("orderNumber"), (String) resultRow.get("email"), (String) resultRow.get("phone"), ((Number) resultRow.get("totalPrice")).doubleValue(), (String) resultRow.get("orderDate"), (String) resultRow.get("orderStatus"), (String) resultRow.get("deliveryDate"));
+        
+        return order;
+    }
+
 
     // =================
     //  GENERAL METHODS:
@@ -597,20 +612,6 @@ public class DatabaseInteract implements AutoCloseable {
     // =================
     //   ORDER METHODS:
     // =================
-
-    // Builds Order object from database row.
-    // Parameters: resultRow - Map of column names to values for order row.
-    // Returns: Order object built from the row.
-    private Order buildOrderFromRow(Map<String, Object> resultRow) throws SQLException {
-        
-        // Order object to return.
-        Order order = null;
-
-        // Build Order object from row.
-        order = new Order((int) resultRow.get("orderNumber"), (String) resultRow.get("email"), (String) resultRow.get("phone"), ((Number) resultRow.get("totalPrice")).doubleValue(), (String) resultRow.get("orderDate"), (String) resultRow.get("orderStatus"), (String) resultRow.get("deliveryDate"));
-        
-        return order;
-    }
 
 
     // Inserts new order row into database.
