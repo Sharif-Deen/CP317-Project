@@ -40,6 +40,7 @@ public class Checkout {
         String confirm = scanner.nextLine().trim().toLowerCase();
         if (!confirm.equals("yes") && !confirm.equals("y")) {
             System.out.println("Checkout cancelled. Your cart has been kept.");
+            Notifications.notification("Order Cancelled.");
             return;
         }
 
@@ -55,6 +56,7 @@ public class Checkout {
         // Step 6: Finalize
         if (success) {
             printReceipt(cart, method, shipping);
+            Notifications.notification("Order Confirmed. Enjoy!");
             cart.clearCart();
         } else {
             System.out.println("Payment failed. Your cart has been kept.");
