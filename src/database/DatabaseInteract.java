@@ -755,11 +755,37 @@ public class DatabaseInteract implements AutoCloseable {
 
 
     // Finds orders by product brands.
-    public List<Order> findOrdersByBrand(String email) {
+    // Parameters: brand - Brand name to look up orders for.
+    // Returns: List of Order objects, empty list if none found.
+    public List<Order> findOrdersByBrand(String brand) {
+        // List to store orders found for the brand.
+        List<Order> orderList = new ArrayList<>();
+        Order currentOrder = null;
 
-        //Will do this soon -Sharif.
-        List<Order> tempList = new ArrayList<Order>(); //just added this to remove the error. delete when implementing this function.
-        return tempList;
+        // Query database for orders that include products of the given brand.
+        try {
+            List<Map<String, Object>> queryResults = runCustomQuery(
+                "SELECT DISTINCT o.orderNumber, o.email, o.phone, o.totalPrice, o.orderDate, o.orderStatus, o.deliveryDate " +
+                "FROM \"order\" o " +
+                "JOIN orderDetails od ON o.orderNumber = od.orderNumber " +
+                "JOIN product p ON od.productNumber = p.productNumber " +
+                "WHERE p.productBrand = ? " +
+                "ORDER BY o.orderDate DESC",
+                brand
+            );
+
+            // For each row in query results, build Order object and add to list.
+            for (Map<String, Object> resultRow : queryResults) {
+                currentOrder = buildOrderFromRow(resultRow);
+                orderList.add(currentOrder);
+            }
+
+        // If order lookup failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to load orders for brand: " + sqlException.getMessage());
+            orderList = new ArrayList<>();
+        }
+        return orderList;
     }
 
 }
