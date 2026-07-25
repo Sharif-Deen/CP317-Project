@@ -108,7 +108,8 @@ const OrdersPage = () => {
 
                                 <div className="order-footer">
                                     <div className="order-totals">
-                                        {order.discount > 0 && (
+                    
+                                      {order.discount > 0 && (
                                             <span className="order-discount">Bulk Discount: -${order.discount.toFixed(2)}</span>
                                         )}
                                         <span className="order-total">Total: ${order.total.toFixed(2)}</span>
