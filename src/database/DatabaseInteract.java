@@ -386,29 +386,26 @@ public class DatabaseInteract implements AutoCloseable {
     // Inserts new product row, along with tags and stock.
     // Parameters: product - Product object to insert into database.
     // Returns true when successful, false when failed.
-    public boolean addProduct(Product product) {
-        // Flag to indicate if product was added successfully.
-        boolean success = false;
-        
+    public int addProduct(Product product) {
+        int productNumber = -1;
         // Insert product row into database.
         try {String insertProductQuery = "INSERT INTO product " + "(productName, price, productCategory, productBrand, productShortDescription) " + "VALUES (?, ?, ?, ?, ?)";
 
             // Get new productNumber for inserted product.
-            int productNumber = runCustomUpdate(insertProductQuery, product.getName(), product.getPrice(), product.getType(), product.getBrand(), product.getDescription());
+            productNumber = runCustomUpdate(insertProductQuery, product.getName(), product.getPrice(), product.getType(), product.getBrand(), product.getDescription());
 
             // If product inserted successfully, save stock and tags.
             if (productNumber > 0) {
                 saveProductStock(productNumber, product);
                 saveProductTags(productNumber, product.getTags());
 
-                success = true;
             }
         
         // If product insertion failed, print error message.
         } catch (SQLException sqlException) {
             System.out.println("Failed to add product: " + sqlException.getMessage());
         }
-        return success;
+        return productNumber;
     }
 
 

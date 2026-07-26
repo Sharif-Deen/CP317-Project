@@ -45,7 +45,7 @@ public class ProductHandler implements HttpHandler {
                 String requestString = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
                 Product newProduct = gson.fromJson(requestString, Product.class);
 
-                int productId = db.addProductAndReturnId(newProduct);
+                int productId = db.addProduct(newProduct);
 
                 JsonObject jsonResponse = new JsonObject();
                 if (productId > 0) {

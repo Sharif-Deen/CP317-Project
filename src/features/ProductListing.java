@@ -55,7 +55,7 @@ public class ProductListing {
         }
 
         Product newProduct = new Product(0, name, price, type, brand, tags, description, location, stock);
-        boolean success = database.addProduct(newProduct);
+        boolean success = database.addProduct(newProduct) > 0;
 
         if (success) {
             System.out.println("Product \"" + name + "\" was added successfully.");

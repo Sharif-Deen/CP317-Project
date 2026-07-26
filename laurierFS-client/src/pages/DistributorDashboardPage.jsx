@@ -76,18 +76,22 @@ const DistributorDashboardPage = () => {
         }
 
         try {
-            const response = await addProduct({
+            const createdProduct = {
                 id: null,
                 name: newItemName,
                 price: price,
                 type: newItemCategory,
                 brand: user?.username,
-                tags: newItemTags.split(',').map(tag => tag.trim()), // Added
-                description: newItemDescription, // Added
+                tags: newItemTags.split(',').map(tag => tag.trim()),
+                description: newItemDescription,
                 location: newItemLocation,
                 stock: stock,
-            });
+            };
+            const response = await addProduct(createdProduct);
 
+            createdProduct.id = response.id
+
+            setItems((prevItems) => [...prevItems, createdProduct]);
             setNewItemName("");
             setNewItemPrice("");
             setNewItemStock("");
@@ -96,7 +100,6 @@ const DistributorDashboardPage = () => {
             setNewItemTags(""); // Added
             setNewItemDescription(""); // Added
             setAddItemError("");
-            await loadCatalog();
         } catch (err) {
             setAddItemError("Failed to add product to the catalog.");
         }
@@ -112,20 +115,25 @@ const DistributorDashboardPage = () => {
         }
 
         try {
-            await editProduct({
+            const updatedProduct = {
                 id: editingItem.id,
                 name: editingItem.name,
                 price: price,
                 type: editingItem.type,
-                brand: editingItem.brand,
+                brand: user?.username,
                 tags: typeof editingItem.tags === "string" ? editingItem.tags.split(",").map(t => t.trim()) : editingItem.tags,
                 description: editingItem.description,
                 location: editingItem.location,
                 stock: stock,
-            });
+            };
+
+            await editProduct(updatedProduct);
+
+            setItems((prevItems) =>
+                prevItems.map((item) => (item.id === updatedProduct.id ? updatedProduct : item))
+            );
             setEditingItem(null);
             setEditError("");
-            await loadCatalog();
         } catch (err) {
             setEditError("Failed to save changes.");
         }
@@ -147,7 +155,11 @@ const DistributorDashboardPage = () => {
         const newStock = Math.max(0, parseInt(item.stock) + delta);
         try {
             await updateProductStock(itemId, newStock);
-            await loadCatalog();
+            setItems((prevItems) =>
+                prevItems.map((prevItem) =>
+                    prevItem.id === itemId ? { ...prevItem, stock: newStock } : prevItem
+                )
+            );
         } catch (err) {
             setCatalogError("Failed to update stock.");
         }
