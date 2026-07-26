@@ -36,7 +36,7 @@ public class SignupHandler implements HttpHandler {
 
             try(DatabaseInteract db = new DatabaseInteract()){
                 //Test if email/username already taken
-                List<Map<String, Object>> queryResults = db.runCustomQuery("SELECT email, username FROM users WHERE email = ? OR username = ?", email, username);
+                List<Map<String, Object>> queryResults = db.runCustomQuery("SELECT email, username FROM users WHERE email = ? OR username = ?", email.toLowerCase(), username.toLowerCase());
                 boolean emailSuccess = true;
                 boolean userSuccess = true;
                 for(int i=0;i<queryResults.size();i++){
@@ -58,7 +58,7 @@ public class SignupHandler implements HttpHandler {
                 
 
                 //insert into USERS table and return id
-                int id = db.runCustomUpdate("INSERT INTO users (email, username, userPassword, phone, userType) VALUES (?, ?, ?, ?, ?)", email, username, Hash.hashPassword(password), "", category);
+                int id = db.runCustomUpdate("INSERT INTO users (email, username, userPassword, phone, userType) VALUES (?, ?, ?, ?, ?)", email.toLowerCase(), username.toLowerCase(), Hash.hashPassword(password), "", category);
                 
                 if(id>-1){
                     //respond with new id, username, email, role/category

@@ -40,7 +40,7 @@ public class LoginHandler implements HttpHandler {
             }
 
             try(DatabaseInteract db = new DatabaseInteract()){
-                List<Map<String, Object>> queryResults = db.runCustomQuery(sqlQuery, identifier, Hash.hashPassword(password));
+                List<Map<String, Object>> queryResults = db.runCustomQuery(sqlQuery, identifier.toLowerCase(), Hash.hashPassword(password));
                 if (queryResults.size() == 1){
                     Map<String, Object> values = queryResults.get(0);
                     JsonObject jsonResponse = new JsonObject();

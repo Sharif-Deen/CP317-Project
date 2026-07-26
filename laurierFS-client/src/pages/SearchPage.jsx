@@ -5,8 +5,10 @@ import { useCart } from "../context/CartContext"
 import Logo from "../components/Logo.jsx"
 import ProductDetailModal from "../components/ProductDetailModal.jsx"
 import "../styles/SearchPage.css"
+import { useAuth } from "../context/AuthContext.jsx"
 
 const SearchPage = () => {
+    const { user, isAuthenticated, logout } = useAuth()
     const navigate = useNavigate()
     const { addToCart, cartCount } = useCart()
 
@@ -69,7 +71,7 @@ const SearchPage = () => {
                 <div className="header-left">
                     <Logo light={true} />
                 </div>
-                <span className="header-tagline">Serving the Waterloo Region</span>
+                <span className="header-tagline">Welcome, {isAuthenticated?user.username+"!":"Guest!"}</span>
                 <div className="header-right">
                     <button className="cart-btn" onClick={() => navigate("/orders")}>
                         📋 Orders
@@ -77,8 +79,8 @@ const SearchPage = () => {
                     <button className="cart-btn" onClick={() => navigate("/cart")}>
                         🛒 Cart <span className="cart-count">{cartCount}</span>
                     </button>
-                    <button className="profile-btn" onClick={() => navigate("/")}>
-                        👤
+                    <button className="cart-btn" onClick={() => {logout();navigate("/")}}>
+                        👤 {isAuthenticated?"Logout":"Log in"}
                     </button>
                 </div>
             </header>

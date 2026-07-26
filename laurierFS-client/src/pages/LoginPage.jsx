@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Navigate} from "react-router-dom"
 import {FaEye, FaEyeSlash, FaCheckCircle} from "react-icons/fa"
 import Button from "../components/Button.jsx"
 import InputField from "../components/InputField.jsx"
@@ -31,7 +31,13 @@ const LoginPage = ()=> {
     const [signupSuccess, setSignupSuccess] = useState(false) 
     const [formData, setFormData] = useState(EMPTY_FORM)
     const navigate = useNavigate()
-    const { setLoggedInUser } = useAuth()
+    const { user, isAuthenticated, setLoggedInUser } = useAuth()
+    
+    //route to correct page if already logged in
+    // if(isAuthenticated){
+    //     const destination = CATEGORY_ROUTES[user.category] ?? "/"
+    //     navigate(destination)
+    // }
 
     const handleChange = (e) =>{
         const { name, value } = e.target
@@ -126,7 +132,6 @@ const LoginPage = ()=> {
                     category: formData.category
 
                 })
-                console.log(result)
                 setSignupSuccess(true)
             } else{
                 const result = await login({
@@ -162,6 +167,13 @@ const LoginPage = ()=> {
         setError("")
         setFieldErrors({})
         setFormData(EMPTY_FORM)
+    }
+
+    // if AuthContext already restored a logged-in user from
+    // localStorage, skip the login form entirely and go straight to their page.
+    if (isAuthenticated) {
+        const destination = CATEGORY_ROUTES[user.category] ?? "/"
+        return <Navigate to={destination} replace />
     }
 
     // Confirmation screen after signup, with a button to go back to login
@@ -262,7 +274,7 @@ const LoginPage = ()=> {
                 <a href="#" onClick={toggleAuth}>{isSignUp?"Login":"Sign Up"}</a>
             </div>
             {!isSignUp && <a href="#">Forgot Password?</a>}
-            <a href="#">Continue as Guest</a>
+            <a href="#" onClick={(e)=>{e.preventDefault();navigate("/search")}}>Continue as Guest</a>
             {/* <a href="#" onClick={(e) => { e.preventDefault(); navigate("/distributor-login") }}>Distributor Login Page</a> */}
         </div>
     </div>

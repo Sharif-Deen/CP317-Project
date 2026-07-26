@@ -33,8 +33,7 @@ public class ProductHandler implements HttpHandler {
                 ServerUtil.sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse);
 
             } catch (Exception e){ // Return error message
-                System.err.println("Error fetching products: " + e.getMessage());
-                e.printStackTrace();
+                Server.printError("Error fetching products: ",e);
                 String jsonResponse = "{\"error\": \"Failed to retrieve products from the database.\"}";
                 ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, jsonResponse);
             }
@@ -60,8 +59,7 @@ public class ProductHandler implements HttpHandler {
                     ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, jsonResponse.toString());
                 }
             } catch (Exception e) {
-                System.err.println("Error adding product: " + e.getMessage());
-                e.printStackTrace();
+                Server.printError("Error adding product: ", e);
                 ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to add product to the database.\"}");
             }
 
@@ -86,8 +84,7 @@ public class ProductHandler implements HttpHandler {
                     ServerUtil.sendJson(exchange, ServerUtil.STATUS_NOT_FOUND, jsonResponse.toString());
                 }
             } catch (Exception e) {
-                System.err.println("Error deleting product: " + e.getMessage());
-                e.printStackTrace();
+                Server.printError("Error deleting product: ",e);
                 ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to remove product from the database.\"}");
             }
             
@@ -118,8 +115,7 @@ public class ProductHandler implements HttpHandler {
                     ServerUtil.sendJson(exchange, ServerUtil.STATUS_NOT_FOUND, jsonResponse.toString());
                 }
             } catch (Exception e) {
-                System.err.println("Error updating stock: " + e.getMessage());
-                e.printStackTrace();
+                Server.printError("Error updating stock: ", e);
                 ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to update stock in database.\"}");
             }
         }
