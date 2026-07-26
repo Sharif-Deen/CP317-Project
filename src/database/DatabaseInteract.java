@@ -753,7 +753,25 @@ public class DatabaseInteract implements AutoCloseable {
         return success;
     }
 
+    // Updates stock quantity for a specific product.
+    // Parameters: productNumber - Product number to update.
+    // Parameters: newStock - New stock quantity to set.
+    // Returns: true when successful, false when failed.
+    public boolean updateProductStock(int productNumber, int newStock) {
+        // Flag to indicate if stock was updated successfully.
+        boolean success = false;
 
+        // Update product stock row in database.
+        try {
+            int updatedRows = runCustomUpdate("UPDATE productStock SET stockQuantity = ? WHERE productNumber = ?", newStock, productNumber);
+            success = updatedRows > 0;
+
+        // If stock update failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to update product stock: " + sqlException.getMessage());
+        }
+        return success;
+    }
     // Finds orders by product brands.
     // Parameters: brand - Brand name to look up orders for.
     // Returns: List of Order objects, empty list if none found.
