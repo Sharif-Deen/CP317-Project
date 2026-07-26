@@ -100,8 +100,8 @@ public class OrderHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
 
         // Add CORS headers to response and handle preflight requests.
-        CORSUtil.addCORSHeaders(exchange);
-        if (CORSUtil.handlePreflight(exchange)) return;
+        ServerUtil.addCORSHeaders(exchange);
+        if (ServerUtil.handlePreflight(exchange)) return;
 
         // Get the HTTP request method.
         String method = exchange.getRequestMethod();
@@ -131,7 +131,7 @@ public class OrderHandler implements HttpHandler {
 
                 // Convert list of orders to JSON and send response.
                 String jsonResponse = gsonInstance.toJson(orderList);
-                sendJson(exchange, CORSUtil.STATUS_OK, jsonResponse);
+                sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse);
     
             // Handle exceptions that occur during database interaction.
             } catch (Exception exception) {
@@ -139,7 +139,7 @@ public class OrderHandler implements HttpHandler {
                 
                 // Print stack trace.
                 exception.printStackTrace();
-                sendJson(exchange, CORSUtil.STATUS_SERVER_ERR, "{\"error\": \"Failed to retrieve orders from the database.\"}");
+                sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"error\": \"Failed to retrieve orders from the database.\"}");
             }
 
         }
@@ -166,14 +166,14 @@ public class OrderHandler implements HttpHandler {
                     jsonResponse.addProperty("orderNumber", newOrderNumber);
                     jsonResponse.addProperty("message", "Order added successfully");
                     
-                    sendJson(exchange, CORSUtil.STATUS_OK, jsonResponse.toString());
+                    sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse.toString());
 
                 // If new order number is not positive, addition failed.
                 } else {
                     jsonResponse.addProperty("status", "error");
                     jsonResponse.addProperty("message", "Failed to add order");
                     
-                    sendJson(exchange, CORSUtil.STATUS_SERVER_ERR, jsonResponse.toString());
+                    sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, jsonResponse.toString());
                 }
 
             // Handle exceptions that occur during database interaction.
@@ -182,7 +182,7 @@ public class OrderHandler implements HttpHandler {
 
                 // Print stack trace.
                 exception.printStackTrace();
-                sendJson(exchange, CORSUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to add order to the database.\"}");
+                sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to add order to the database.\"}");
             }
         }
         return;

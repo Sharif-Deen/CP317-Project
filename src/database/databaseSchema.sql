@@ -16,11 +16,11 @@ CREATE TABLE IF NOT EXISTS users (
     username TEXT NOT NULL,
     userPassword TEXT NOT NULL,
     phone TEXT NOT NULL,
-    userType INTEGER,
+    userType TEXT NOT NULL CHECK (userType IN ('customer','distributor')),
     UNIQUE(email, phone)
 );
 
-CREATE TABLE IF NOT EXISTS order (
+CREATE TABLE IF NOT EXISTS orders (
     orderNumber INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL,
     phone TEXT NOT NULL,

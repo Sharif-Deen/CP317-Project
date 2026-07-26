@@ -67,16 +67,16 @@ const DistributorDashboardPage = () => {
         }
 
         try {
-            await addProduct({
-                id: 0,
+            const response = await addProduct({
+                id: null,
                 name: newItemName,
-                price,
+                price: price,
                 type: newItemCategory,
                 brand: "",
                 tags: newItemTags.split(',').map(tag => tag.trim()), // Added
                 description: newItemDescription, // Added
                 location: newItemLocation,
-                stock,
+                stock: stock,
             });
 
             setNewItemName("");

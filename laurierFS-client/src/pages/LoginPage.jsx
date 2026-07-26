@@ -132,3 +132,6 @@ const LoginPage = ()=> {
 
 
 export default LoginPage
+
+//TODO: add signup distributor/customer selection
+//TODO: ensure correct inputs for username and email BEFORE sending to server

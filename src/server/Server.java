@@ -13,7 +13,8 @@ public class Server {
         // Your route handlers
         server.createContext("/api/products", new ProductHandler());
         server.createContext("/api/login", new LoginHandler());
-        server.createContext("/api/register", new RegisterHandler());
+        server.createContext("/api/signup", new SignupHandler());
+        // server.createContext("/api/orders", new OrdersHandler());
         
         server.setExecutor(null);
         server.start();
