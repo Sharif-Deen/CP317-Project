@@ -1,5 +1,6 @@
 node_modules/
 node_modules - Copy/
+*node_modules*
 .vscode/
 *.zip
 *.class
