@@ -1,0 +1,8 @@
+FreshFields@laurierfs.com|FreshFields|pass123|distributor
+ChefPro@laurierfs.com|ChefPro|pass123|distributor
+KitchenMax@laurierfs.com|KitchenMax|pass123|distributor
+BistroLine@laurierfs.com|BistroLine|pass123|distributor
+SteelChef@laurierfs.com|SteelChef|pass123|distributor
+cust1@laurierfs.com|cust1|pw1234|customer
+cust2@laurierfs.com|cust2|abc1234|customer
+cust3@laurierfs.com|cust3|mypass1|customer

@@ -1,0 +1,3 @@
+1|cust1@laurierfs.com|555-0101|136.49|2026-07-23|PROCESSING|2026-07-25|Bulk Roma Tomatoes,Frozen Chicken Breast (10kg),All-Purpose Flour 25kg
+2|cust2@laurierfs.com|555-0102|130.74|2026-07-24|SHIPPED|2026-07-27|Frozen Chicken Breast (10kg),All-Purpose Flour 25kg,Disposable Paper Food Trays (1000ct)
+3|cust3@laurierfs.com|555-0103|110.70|2026-07-25|DELIVERED|2026-07-29|All-Purpose Flour 25kg,Disposable Paper Food Trays (1000ct),Stainless Steel Chef Knife 10in
