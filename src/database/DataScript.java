@@ -60,7 +60,7 @@ public class DataScript {
             int stock = Integer.parseInt(parts[7].trim());
 
             Product product = new Product(0, productName, price, category, brand, tags, description, location, stock);
-            if (db.addProduct(product)) {
+            if (db.addProduct(product)>0) {
                 insertedProducts.add(product);
             }
         }
@@ -141,7 +141,6 @@ public class DataScript {
         for (int index = 0; index < customerOrders.length; index++) {
             String[] customerOrder = customerOrders[index];
             String email = customerOrder[0];
-            String username = customerOrder[1];
             String phone = customerOrder[2];
             String status = customerOrder[3];
 
