@@ -20,9 +20,6 @@ public class Edge {
         return (distanceKm / speedLimitKmh) * 60.0;
     }
 
-
-
-
     // Getters
     public Node getTargetNode() {
         return targetNode;

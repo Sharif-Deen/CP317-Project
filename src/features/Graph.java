@@ -22,7 +22,7 @@ public class Graph {
     public void resetGraph() {
         for (Node node : nodes.values()) {
             node.setDistance(Double.MAX_VALUE);
-            node.getShortestPath().clear();
+            node.setShortestPath(new java.util.ArrayList<>());
         }
     }
 }

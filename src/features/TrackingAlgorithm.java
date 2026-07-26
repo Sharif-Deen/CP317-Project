@@ -53,7 +53,19 @@ public class TrackingAlgorithm {
     */
 
     public static int getETAMinutes(Node sourceNode, Node destinationNode) {
+        //Needed to add fix in the case that a node was null
+        if(sourceNode == null || destinationNode == null) {
+            System.err.println("Source or Destination is null.");
+            return -1;
+        }
+
+
         calculateShortestPath(sourceNode);
+
+        //Accomodation for a destination that does not contain a valid edge. 
+        if(destinationNode.getDistance() == Double.MAX_VALUE) {
+            return -1;
+        }
 
         List<Node> Path = new ArrayList<>(destinationNode.getShortestPath());
         Path.add(destinationNode);
@@ -79,9 +91,7 @@ public class TrackingAlgorithm {
         String pathStr = destinationNode.getShortestPath().stream().map(Node::getName).collect(Collectors.joining(" -> "));
 
         String route = pathStr.isBlank()
-                ? destinationNode.getName()
-                : "%s -> %s".formatted(pathStr, destinationNode.getName());
-
+                ? destinationNode.getName() : "%s -> %s".formatted(pathStr, destinationNode.getName());
         return "%s | ETA: %d mins".formatted(route, etaMins);
     }
 }
