@@ -25,9 +25,9 @@ export const AuthProvider = ({ children }) => {
         }
     }, [user])
 
-    // Call this after a successful login()/signup() with the { id, role } result.
+    // Call this after a successful login()/signup() with the { id, username, email, category } result.
     const setLoggedInUser = (result) => {
-        setUser({ id: result.id, role: result.role })
+        setUser({...result})
     }
 
     const logout = () => {
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
     )
 }
 
-// Usage in any component: const { user, isAuthenticated, logout } = useAuth()
+// Usage in any component: const { user, isAuthenticated, setLoggedInUser, logout } = useAuth()
 export const useAuth = () => {
     const context = useContext(AuthContext)
     if (!context) {
