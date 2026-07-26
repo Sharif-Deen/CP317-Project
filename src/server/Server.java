@@ -21,4 +21,9 @@ public class Server {
         System.out.println("Server running on port 8080");
         
     }
+
+    public static void printError(String context, Exception e){
+        System.err.println(context + e.getMessage());
+        e.printStackTrace();
+    }
 }

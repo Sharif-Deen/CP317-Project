@@ -1,4 +1,5 @@
 package server;
+import features.Hash;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import database.DatabaseInteract;
@@ -30,35 +31,33 @@ public class LoginHandler implements HttpHandler {
             String identifier = loginAttempt.get("identifier").getAsString();
             String password = loginAttempt.get("password").getAsString();
             
-            //test if valid credentials, return: id, username, email, role
+            //test if valid credentials, return: id, username, email, category
             String sqlQuery;
             if(identifier.contains("@")){
-                sqlQuery = "SELECT accountNumber, username, email, userType FROM users WHERE email = ? AND password = ?";
+                sqlQuery = "SELECT accountNumber, username, email, userType FROM users WHERE email = ? AND userPassword = ?";
             }else{
-                sqlQuery = "SELECT accountNumber, username, email, userType FROM users WHERE username = ? AND password = ?";
+                sqlQuery = "SELECT accountNumber, username, email, userType FROM users WHERE username = ? AND userPassword = ?";
             }
 
             try(DatabaseInteract db = new DatabaseInteract()){
-                List<Map<String, Object>> queryResults = db.runCustomQuery(sqlQuery, identifier, password);
+                List<Map<String, Object>> queryResults = db.runCustomQuery(sqlQuery, identifier, Hash.hashPassword(password));
                 if (queryResults.size() == 1){
                     Map<String, Object> values = queryResults.get(0);
                     JsonObject jsonResponse = new JsonObject();
                     jsonResponse.addProperty("id", (int) values.get("accountNumber"));
                     jsonResponse.addProperty("username", (String) values.get("username"));
                     jsonResponse.addProperty("email", (String) values.get("email"));
-                    jsonResponse.addProperty("role", (String) values.get("userType"));
+                    jsonResponse.addProperty("category", (String) values.get("userType"));
                     ServerUtil.sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse.toString());
 
                 } else {
                     ServerUtil.sendJson(exchange, ServerUtil.STATUS_UNAUTHORIZED, "{\"status\": \"error\", \"message\": \"Invalid Email/Username or Password.\"}");
                 }
             }catch(SQLException e){
-                System.err.println("Error connecting to database: " + e.getMessage());
-                e.printStackTrace();
+                Server.printError("Error connecting to database:", e);
                 ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to connect to database.\"}");
             }catch(Exception e){
-                System.err.println("Error occured while authenticating login: " + e.getMessage());
-                e.printStackTrace();
+                Server.printError("Error occured while authenticating login: ", e);
                 ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Server Error: Failed to authenticate login.\"}");
             }
            
