@@ -12,12 +12,11 @@ CREATE TABLE IF NOT EXISTS product (
 
 CREATE TABLE IF NOT EXISTS users (
     accountNumber INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
     username TEXT NOT NULL,
     userPassword TEXT NOT NULL,
     phone TEXT NOT NULL,
-    userType TEXT NOT NULL CHECK (userType IN ('customer','distributor')),
-    UNIQUE(email, phone)
+    userType TEXT NOT NULL CHECK (userType IN ('customer','distributor'))
 );
 
 CREATE TABLE IF NOT EXISTS orders (
@@ -28,7 +27,7 @@ CREATE TABLE IF NOT EXISTS orders (
     orderDate DATE NOT NULL,
     orderStatus TEXT NOT NULL,
     deliveryDate DATE,
-    FOREIGN KEY (email, phone) REFERENCES users(email, phone)
+    FOREIGN KEY email REFERENCES users(email)
 );
 
 CREATE TABLE IF NOT EXISTS orderDetails (

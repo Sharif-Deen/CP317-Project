@@ -7,7 +7,7 @@ export const OrderProvider = ({ children }) => {
 
     const placeOrder = (orderData) => {
         const newOrder = {
-            id: "ORD-" + Date.now(),
+            id: "ORD-"+orderData.id || "ORD-" + Date.now(),
             items: orderData.items,
             subtotal: orderData.subtotal,
             discount: orderData.discount || 0,

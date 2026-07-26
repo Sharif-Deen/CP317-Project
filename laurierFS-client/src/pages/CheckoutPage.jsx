@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useOrders } from "../context/OrderContext";
 import Logo from "../components/Logo";
+import { createOrder } from "../services/orderService";
 import "../styles/CheckoutPage.css";
 
 const TAX_RATE = 0.13;
@@ -52,9 +53,29 @@ export default function CheckoutPage() {
 
   const handleShippingNext = () => { if (validateShipping()) setStep(2); };
 
-  const handlePlaceOrder = () => {
-    if (validatePayment()) {
+  const handlePlaceOrder = async () => {
+    if (!validatePayment()) {
+      return;
+    }
+
+    const serverOrderPayload = {
+      email: "customer@example.com",
+      phone: shipping.phone,
+      orderDate: new Date().toISOString().slice(0, 10),
+      orderStatus: "confirmed",
+      deliveryDate: null,
+      products: items.map(({ product, quantity }) => ({
+        productId: product.id,
+        productName: product.name,
+        quantity,
+        price: product.price,
+      })),
+    };
+
+    try {
+      const response = await createOrder(serverOrderPayload);
       const order = placeOrder({
+        id: "ORD-"+response.orderNumber || `ORD-${Date.now()}`,
         items: items,
         subtotal: cartTotal,
         discount: bulkDiscount,
@@ -66,6 +87,8 @@ export default function CheckoutPage() {
       setPlacedOrder(order);
       clearCart();
       setStep(3);
+    } catch (error) {
+      setErrors((prev) => ({ ...prev, submit: error.message }));
     }
   };
 
@@ -192,6 +215,7 @@ export default function CheckoutPage() {
                   <button className="checkout-btn-back" onClick={() => setStep(1)}>← Back</button>
                   <button className="checkout-btn" onClick={handlePlaceOrder}>Place Order →</button>
                 </div>
+                {errors.submit && <p className="error">{errors.submit}</p>}
               </div>
             )}
 
