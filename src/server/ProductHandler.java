@@ -32,11 +32,11 @@ public class ProductHandler implements HttpHandler {
         String requestMethod = exchange.getRequestMethod();
         
         if ("GET".equalsIgnoreCase(requestMethod)) {
-            //get and send all products from database
+            // Get and send all products from database
             try (DatabaseInteract db = new DatabaseInteract()) {
                 List<Product> products = db.findAllProducts();
 
-                //convert products to json objects array
+                // Convert products to json objects array
                 String jsonResponse = gson.toJson(products);
 
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
@@ -46,7 +46,7 @@ public class ProductHandler implements HttpHandler {
                     os.write(jsonResponse.getBytes());
                 }
 
-            } catch (Exception e){ //return error message
+            } catch (Exception e){ // Return error message
                 System.err.println("Error fetching products: " + e.getMessage());
                 e.printStackTrace();
                 String jsonResponse = "{\"error\": \"Failed to retrieve products from the database.\"}";
@@ -55,9 +55,8 @@ public class ProductHandler implements HttpHandler {
                 exchange.sendResponseHeaders(CORSUtil.STATUS_SERVER_ERR, jsonResponse.getBytes().length);
             }
             
-        }
-        else if ("POST".equalsIgnoreCase(requestMethod)){
-            //add product to db
+        } else if ("POST".equalsIgnoreCase(requestMethod)) {
+            // Add product to db
             try (DatabaseInteract db = new DatabaseInteract()) {
                 InputStream requestBody = exchange.getRequestBody();
                 String requestString = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
@@ -81,8 +80,8 @@ public class ProductHandler implements HttpHandler {
                 sendJson(exchange, CORSUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to add product to the database.\"}");
             }
 
-        } else if ("DELETE".equalsIgnoreCase(requestMethod)){
-            //delete product from db
+        } else if ("DELETE".equalsIgnoreCase(requestMethod)) {
+            // Delete product from db
             try (DatabaseInteract db = new DatabaseInteract()) {
                 InputStream requestBody = exchange.getRequestBody();
                 String requestString = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
@@ -106,8 +105,38 @@ public class ProductHandler implements HttpHandler {
                 e.printStackTrace();
                 sendJson(exchange, CORSUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to remove product from the database.\"}");
             }
+            
+        } else if ("PUT".equalsIgnoreCase(requestMethod)) {
+            // Update stock in db
+            try (DatabaseInteract db = new DatabaseInteract()) {
+                String path = exchange.getRequestURI().getPath();
+                String[] pathParts = path.split("/");
+                
+                // Expects: /api/products/{id}/stock
+                int productId = Integer.parseInt(pathParts[3]);
+
+                InputStream requestBody = exchange.getRequestBody();
+                String requestString = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
+                JsonObject putRequest = gson.fromJson(requestString, JsonObject.class);
+                int newStock = putRequest.get("stock").getAsInt();
+
+                boolean success = db.updateProductStock(productId, newStock);
+
+                JsonObject jsonResponse = new JsonObject();
+                if (success) {
+                    jsonResponse.addProperty("status", "success");
+                    jsonResponse.addProperty("message", "Stock updated successfully");
+                    sendJson(exchange, CORSUtil.STATUS_OK, jsonResponse.toString());
+                } else {
+                    jsonResponse.addProperty("status", "error");
+                    jsonResponse.addProperty("message", "Product not found");
+                    sendJson(exchange, 404, jsonResponse.toString());
+                }
+            } catch (Exception e) {
+                System.err.println("Error updating stock: " + e.getMessage());
+                e.printStackTrace();
+                sendJson(exchange, CORSUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to update stock in database.\"}");
+            }
         }
-
     }
-
 }
