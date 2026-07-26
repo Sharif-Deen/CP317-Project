@@ -1,12 +1,17 @@
 package server;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+
 import com.sun.net.httpserver.Headers;
 
-public class CORSUtil {
+public class ServerUtil {
     //Status codes
     public static final int STATUS_OK = 200;
     public static final int STATUS_UNAUTHORIZED = 401;
+    public static final int STATUS_NOT_FOUND = 404;
+    public static final int STATUS_DATABASE_CONFLICT = 409;
     public static final int STATUS_SERVER_ERR = 500;
 
 
@@ -24,5 +29,14 @@ public class CORSUtil {
             return true;
         }
         return false;
+    }
+
+    public static void sendJson(HttpExchange exchange, int statusCode, String jsonResponse) throws IOException {
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        exchange.sendResponseHeaders(statusCode, jsonResponse.getBytes(StandardCharsets.UTF_8).length);
+
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(jsonResponse.getBytes(StandardCharsets.UTF_8));
+        }
     }
 }

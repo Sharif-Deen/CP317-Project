@@ -5,8 +5,10 @@ import InputField from "../components/InputField.jsx";
 import Logo from "../components/Logo.jsx";
 import { getProducts, addProduct, deleteProduct } from "../services/productService.js";
 import "../styles/DistributorDashboardPage.css";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const DistributorDashboardPage = () => {
+    const {user, isAuthenticated, logout} = useAuth()
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -27,7 +29,10 @@ const DistributorDashboardPage = () => {
     const loadCatalog = async () => {
         try {
             const products = await getProducts();
-            setItems(products);
+            const filteredProducts = products.filter(
+                (product) => product.brand?.toLowerCase() === user?.username?.toLowerCase()
+            )
+            setItems(filteredProducts);
             setCatalogError("");
         } catch (err) {
             setCatalogError("Failed to load catalog from the server.");
@@ -67,16 +72,16 @@ const DistributorDashboardPage = () => {
         }
 
         try {
-            await addProduct({
-                id: 0,
+            const response = await addProduct({
+                id: null,
                 name: newItemName,
-                price,
+                price: price,
                 type: newItemCategory,
-                brand: "",
+                brand: user?.username,
                 tags: newItemTags.split(',').map(tag => tag.trim()), // Added
                 description: newItemDescription, // Added
                 location: newItemLocation,
-                stock,
+                stock: stock,
             });
 
             setNewItemName("");
@@ -120,7 +125,7 @@ const DistributorDashboardPage = () => {
                     <span className="nav-tagline">Distributor Portal</span>
                 </div>
                 <div className="nav-right">
-                    <button className="lfs-outline-btn" onClick={handleLogout}>
+                    <button className="lfs-outline-btn" onClick={()=>{logout(); navigate("/")}}>
                         Logout
                     </button>
                 </div>

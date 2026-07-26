@@ -9,28 +9,30 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { CartProvider } from "./context/CartContext"
 import { OrderProvider } from "./context/OrderContext"
 import ProductReturnsPage from "./pages/ProductReturnsPage";
+import { AuthProvider } from "./context/AuthContext"
 
 function App() {
   return (
-    <OrderProvider>
-      <CartProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/home" element={<SearchPage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/orders" element={<OrdersPage />} />
-            <Route path="/returns" element={<ProductReturnsPage />} />
-            <Route path="/distributor-login" element={<DistributorLoginPage />} />
-            <Route path="/distributor-dashboard" element={<DistributorDashboardPage />} />
-            
-            <Route path="/admin" element={<div>Admin Page Coming Soon</div>} />
-          </Routes>
-        </BrowserRouter>
-      </CartProvider>
-    </OrderProvider>
+    <AuthProvider>
+      <OrderProvider>
+        <CartProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/home" element={<SearchPage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/returns" element={<ProductReturnsPage />} />
+              <Route path="/distributor-login" element={<DistributorLoginPage />} />
+              <Route path="/distributor-dashboard" element={<DistributorDashboardPage />} />
+              
+              </Routes>
+          </BrowserRouter>
+        </CartProvider>
+      </OrderProvider>
+    </AuthProvider>
   )
 }
 
