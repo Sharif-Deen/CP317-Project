@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS product (
     productName TEXT NOT NULL,
     price REAL NOT NULL,
     productCategory TEXT,
-    productBrand TEXT,
+    productBrand TEXT NOT NULL,
     productShortDescription TEXT
 );
 
