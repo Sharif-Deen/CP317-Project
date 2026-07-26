@@ -49,6 +49,17 @@ export const addProduct = async (product) => {
   return data
 }
 
+export const editProduct = async (product) => {
+  const response = await fetch(`${BASE_URL}/api/products/${product.id}`, {
+    method: "PUT",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(product)
+  })
+  const data = await response.json()
+  if (!response.ok) throw new Error(data.message || "Failed to edit product")
+  return data
+}
+
 export const deleteProduct = async (productId) => {
   const response = await fetch(`${BASE_URL}/api/products/${productId}`, {
     method: "DELETE"

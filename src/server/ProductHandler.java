@@ -45,13 +45,13 @@ public class ProductHandler implements HttpHandler {
                 String requestString = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
                 Product newProduct = gson.fromJson(requestString, Product.class);
 
-                //TODO: needs to return product id
-                boolean success = db.addProduct(newProduct);
+                int productId = db.addProductAndReturnId(newProduct);
 
                 JsonObject jsonResponse = new JsonObject();
-                if (success) {
+                if (productId > 0) {
                     jsonResponse.addProperty("status", "success");
                     jsonResponse.addProperty("message", "Product added successfully");
+                    jsonResponse.addProperty("productId", productId);
                     ServerUtil.sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse.toString());
                 } else {
                     jsonResponse.addProperty("status", "error");
@@ -66,10 +66,9 @@ public class ProductHandler implements HttpHandler {
         } else if ("DELETE".equalsIgnoreCase(requestMethod)) {
             // Delete product from db
             try (DatabaseInteract db = new DatabaseInteract()) {
-                InputStream requestBody = exchange.getRequestBody();
-                String requestString = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
-                JsonObject deleteRequest = gson.fromJson(requestString, JsonObject.class);
-                int productId = deleteRequest.get("id").getAsInt();
+                String path = exchange.getRequestURI().getPath();
+                String[] pathParts = path.split("/");
+                int productId = Integer.parseInt(pathParts[3]);
 
                 boolean success = db.removeProductById(productId);
 
@@ -89,34 +88,52 @@ public class ProductHandler implements HttpHandler {
             }
             
         } else if ("PUT".equalsIgnoreCase(requestMethod)) {
-            // Update stock in db
             try (DatabaseInteract db = new DatabaseInteract()) {
                 String path = exchange.getRequestURI().getPath();
                 String[] pathParts = path.split("/");
-                
-                // Expects: /api/products/{id}/stock
-                int productId = Integer.parseInt(pathParts[3]);
 
                 InputStream requestBody = exchange.getRequestBody();
                 String requestString = new String(requestBody.readAllBytes(), StandardCharsets.UTF_8);
-                JsonObject putRequest = gson.fromJson(requestString, JsonObject.class);
-                int newStock = putRequest.get("stock").getAsInt();
 
-                boolean success = db.updateProductStock(productId, newStock);
+                // /api/products/{id}/stock -> stock update only
+                // /api/products/{id}       -> full product edit
+                if (pathParts.length >= 5 && pathParts[4].equals("stock")) {
+                    int productId = Integer.parseInt(pathParts[3]);
+                    JsonObject putRequest = gson.fromJson(requestString, JsonObject.class);
+                    int newStock = putRequest.get("stock").getAsInt();
 
-                JsonObject jsonResponse = new JsonObject();
-                if (success) {
-                    jsonResponse.addProperty("status", "success");
-                    jsonResponse.addProperty("message", "Stock updated successfully");
-                    ServerUtil.sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse.toString());
+                    boolean success = db.updateProductStock(productId, newStock);
+
+                    JsonObject jsonResponse = new JsonObject();
+                    if (success) {
+                        jsonResponse.addProperty("status", "success");
+                        jsonResponse.addProperty("message", "Stock updated successfully");
+                        ServerUtil.sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse.toString());
+                    } else {
+                        jsonResponse.addProperty("status", "error");
+                        jsonResponse.addProperty("message", "Product not found");
+                        ServerUtil.sendJson(exchange, ServerUtil.STATUS_NOT_FOUND, jsonResponse.toString());
+                    }
+
                 } else {
-                    jsonResponse.addProperty("status", "error");
-                    jsonResponse.addProperty("message", "Product not found");
-                    ServerUtil.sendJson(exchange, ServerUtil.STATUS_NOT_FOUND, jsonResponse.toString());
+                    // full product edit
+                    Product updatedProduct = gson.fromJson(requestString, Product.class);
+                    boolean success = db.updateProduct(updatedProduct);
+
+                    JsonObject jsonResponse = new JsonObject();
+                    if (success) {
+                        jsonResponse.addProperty("status", "success");
+                        jsonResponse.addProperty("message", "Product updated successfully");
+                        ServerUtil.sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse.toString());
+                    } else {
+                        jsonResponse.addProperty("status", "error");
+                        jsonResponse.addProperty("message", "Failed to update product");
+                        ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, jsonResponse.toString());
+                    }
                 }
             } catch (Exception e) {
-                Server.printError("Error updating stock: ", e);
-                ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to update stock in database.\"}");
+                Server.printError("Error updating product: ", e);
+                ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to update product in database.\"}");
             }
         }
     }
