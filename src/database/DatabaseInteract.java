@@ -281,6 +281,21 @@ public class DatabaseInteract implements AutoCloseable {
         return productNumber;
     }
 
+    
+    // Builds Order object from database row.
+    // Parameters: resultRow - Map of column names to values for order row.
+    // Returns: Order object built from the row.
+    private Order buildOrderFromRow(Map<String, Object> resultRow) throws SQLException {
+        
+        // Order object to return.
+        Order order = null;
+
+        // Build Order object from row.
+        order = new Order((int) resultRow.get("orderNumber"), (String) resultRow.get("email"), (String) resultRow.get("phone"), ((Number) resultRow.get("totalPrice")).doubleValue(), (String) resultRow.get("orderDate"), (String) resultRow.get("orderStatus"), (String) resultRow.get("deliveryDate"));
+        
+        return order;
+    }
+
 
     // =================
     //  GENERAL METHODS:
@@ -514,6 +529,28 @@ public class DatabaseInteract implements AutoCloseable {
     }
 
 
+    // Removes product from database by productNumber, along with tags and stock.
+    // Parameters: productNumber - Number of product to remove.
+    // Returns: true when successful, false when failed.
+    public boolean removeProductById(int productNumber) {
+        // Flag to indicate if product was removed successfully.
+        boolean success = false;
+
+        // Delete product row, along with tags and stock.
+        try {
+            runCustomUpdate("DELETE FROM productTag WHERE productNumber = ?", productNumber);
+            runCustomUpdate("DELETE FROM productStock WHERE productNumber = ?", productNumber);
+            int affectedRows = runCustomUpdate("DELETE FROM product WHERE productNumber = ?", productNumber);
+
+            success = affectedRows > 0;
+        // If product removal failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to remove product: " + sqlException.getMessage());
+        }
+        return success;
+    }
+
+
     // =================
     //   USER METHODS:
     // =================
@@ -575,20 +612,6 @@ public class DatabaseInteract implements AutoCloseable {
     // =================
     //   ORDER METHODS:
     // =================
-
-    // Builds Order object from database row.
-    // Parameters: resultRow - Map of column names to values for order row.
-    // Returns: Order object built from the row.
-    private Order buildOrderFromRow(Map<String, Object> resultRow) throws SQLException {
-        
-        // Order object to return.
-        Order order = null;
-
-        // Build Order object from row.
-        order = new Order((int) resultRow.get("orderNumber"), (String) resultRow.get("email"), (String) resultRow.get("phone"), ((Number) resultRow.get("totalPrice")).doubleValue(), (String) resultRow.get("orderDate"), (String) resultRow.get("orderStatus"), (String) resultRow.get("deliveryDate"));
-        
-        return order;
-    }
 
 
     // Inserts new order row into database.
@@ -732,11 +755,37 @@ public class DatabaseInteract implements AutoCloseable {
 
 
     // Finds orders by product brands.
-    public List<Order> findOrdersByBrand(String email) {
+    // Parameters: brand - Brand name to look up orders for.
+    // Returns: List of Order objects, empty list if none found.
+    public List<Order> findOrdersByBrand(String brand) {
+        // List to store orders found for the brand.
+        List<Order> orderList = new ArrayList<>();
+        Order currentOrder = null;
 
-        //Will do this soon -Sharif.
-        List<Order> tempList = new ArrayList<Order>(); //just added this to remove the error. delete when implementing this function.
-        return tempList;
+        // Query database for orders that include products of the given brand.
+        try {
+            List<Map<String, Object>> queryResults = runCustomQuery(
+                "SELECT DISTINCT o.orderNumber, o.email, o.phone, o.totalPrice, o.orderDate, o.orderStatus, o.deliveryDate " +
+                "FROM \"order\" o " +
+                "JOIN orderDetails od ON o.orderNumber = od.orderNumber " +
+                "JOIN product p ON od.productNumber = p.productNumber " +
+                "WHERE p.productBrand = ? " +
+                "ORDER BY o.orderDate DESC",
+                brand
+            );
+
+            // For each row in query results, build Order object and add to list.
+            for (Map<String, Object> resultRow : queryResults) {
+                currentOrder = buildOrderFromRow(resultRow);
+                orderList.add(currentOrder);
+            }
+
+        // If order lookup failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to load orders for brand: " + sqlException.getMessage());
+            orderList = new ArrayList<>();
+        }
+        return orderList;
     }
 
 }

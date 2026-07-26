@@ -8,6 +8,7 @@ import DistributorDashboardPage from './pages/DistributorDashboardPage';
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { CartProvider } from "./context/CartContext"
 import { OrderProvider } from "./context/OrderContext"
+import ProductReturnsPage from "./pages/ProductReturnsPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/returns" element={<ProductReturnsPage />} />
             <Route path="/distributor-login" element={<DistributorLoginPage />} />
             <Route path="/distributor-dashboard" element={<DistributorDashboardPage />} />
             
