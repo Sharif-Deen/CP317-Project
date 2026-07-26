@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;     // For column order when reading rows.
 import java.util.Map;               // For key/value pairs.
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 //  =================
 //  DATABASE INTERACT:
@@ -96,7 +97,6 @@ public class DatabaseInteract implements AutoCloseable {
     private void setQueryParameters(PreparedStatement preparedStatement, Object... parameters) throws SQLException {
         // Go through each parameter and insert it into PreparedStatement.
         for (int parameterIndex = 0; parameterIndex < parameters.length; parameterIndex++) {
-            
             preparedStatement.setObject(parameterIndex + 1, parameters[parameterIndex]);
         }
         return;
@@ -287,13 +287,15 @@ public class DatabaseInteract implements AutoCloseable {
     // Parameters: resultRow - Map of column names to values for order row.
     // Returns: Order object built from the row.
     private Order buildOrderFromRow(Map<String, Object> resultRow) throws SQLException {
-        
+
         // Order object to return.
         Order order = null;
 
         // Build Order object from row.
         order = new Order((int) resultRow.get("orderNumber"), (String) resultRow.get("email"), (String) resultRow.get("phone"), ((Number) resultRow.get("totalPrice")).doubleValue(), (String) resultRow.get("orderDate"), (String) resultRow.get("orderStatus"), (String) resultRow.get("deliveryDate"));
-        
+        int orderNumber = ((Number) resultRow.get("orderNumber")).intValue();
+        order.setProducts(loadOrderProducts(orderNumber));
+
         return order;
     }
 
@@ -565,7 +567,9 @@ public class DatabaseInteract implements AutoCloseable {
 
             // Get new account number for inserted user.
             // Phone value does not exist in user object but I have it in database schema.
-            int insertedAccountNumber = runCustomUpdate(insertUserQuery, user.getEmail(), user.getUsername(), Hash.hashPassword(user.getPassword()), "", user.getCategory());
+            String normalizedEmail = user.getEmail() == null ? null : user.getEmail().trim().toLowerCase(Locale.ROOT);
+            String normalizedUsername = user.getUsername() == null ? null : user.getUsername().trim().toLowerCase(Locale.ROOT);
+            int insertedAccountNumber = runCustomUpdate(insertUserQuery, normalizedEmail, normalizedUsername, Hash.hashPassword(user.getPassword()), "", user.getCategory());
 
             success = insertedAccountNumber > 0;
 
@@ -587,7 +591,8 @@ public class DatabaseInteract implements AutoCloseable {
         User user = null;
         
         // Query database fo matching user row.
-        try {List<Map<String, Object>> queryResults = runCustomQuery("SELECT username, userPassword, userType, email " + "FROM users WHERE username = ? LIMIT 1", username);
+        try {String normalizedUsername = username == null ? null : username.trim().toLowerCase(Locale.ROOT);
+            List<Map<String, Object>> queryResults = runCustomQuery("SELECT username, userPassword, userType, email " + "FROM users WHERE username = ? LIMIT 1", normalizedUsername);
 
             // If user row found, build User object.
             if (!queryResults.isEmpty()) {            
@@ -613,6 +618,79 @@ public class DatabaseInteract implements AutoCloseable {
     //   ORDER METHODS:
     // =================
 
+    private int resolveProductNumber(Order.OrderItem orderItem) throws SQLException {
+        if (orderItem == null) {
+            return -1;
+        }
+
+        if (orderItem.getProductId() > 0) {
+            List<Map<String, Object>> productMatches = runCustomQuery(
+                "SELECT productNumber FROM product WHERE productNumber = ? LIMIT 1",
+                orderItem.getProductId()
+            );
+
+            if (!productMatches.isEmpty()) {
+                return ((Number) productMatches.get(0).get("productNumber")).intValue();
+            }
+        }
+
+        String productName = orderItem.getProductName();
+        if (productName != null && !productName.trim().isEmpty()) {
+            Integer productNumber = findProductNumberByName(productName);
+            if (productNumber != null) {
+                return productNumber;
+            }
+        }
+
+        return -1;
+    }
+
+    private void saveOrderDetails(int orderNumber, Order order) throws SQLException {
+        if (order == null || order.getProducts() == null || order.getProducts().isEmpty()) {
+            return;
+        }
+
+        String insertOrderDetailQuery = "INSERT INTO orderDetails (orderNumber, productNumber, quantity, price) VALUES (?, ?, ?, ?)";
+        for (Order.OrderItem orderItem : order.getProducts()) {
+            if (orderItem == null) {
+                continue;
+            }
+
+            int productNumber = resolveProductNumber(orderItem);
+            if (productNumber <= 0) {
+                continue;
+            }
+
+            runCustomUpdate(
+                insertOrderDetailQuery,
+                orderNumber,
+                productNumber,
+                Math.max(orderItem.getQuantity(), 0),
+                orderItem.getPrice()
+            );
+        }
+    }
+
+    private List<Order.OrderItem> loadOrderProducts(int orderNumber) throws SQLException {
+        List<Order.OrderItem> orderProducts = new ArrayList<>();
+        List<Map<String, Object>> queryResults = runCustomQuery(
+            "SELECT od.productNumber, od.quantity, od.price, p.productName " +
+            "FROM orderDetails od " +
+            "JOIN product p ON od.productNumber = p.productNumber " +
+            "WHERE od.orderNumber = ? ORDER BY od.productNumber",
+            orderNumber
+        );
+
+        for (Map<String, Object> resultRow : queryResults) {
+            int productNumber = ((Number) resultRow.get("productNumber")).intValue();
+            int quantity = ((Number) resultRow.get("quantity")).intValue();
+            double price = ((Number) resultRow.get("price")).doubleValue();
+            String productName = (String) resultRow.get("productName");
+            orderProducts.add(new Order.OrderItem(productNumber, productName, quantity, price));
+        }
+
+        return orderProducts;
+    }
 
     // Inserts new order row into database.
     // Parameters: order - Order object to insert into database.
@@ -622,10 +700,15 @@ public class DatabaseInteract implements AutoCloseable {
         int insertedOrderNumber = -1;
 
         // Insert order row into database.
-        try { String insertOrderQuery = "INSERT INTO \"orders\" " + "(email, phone, totalPrice, orderDate, orderStatus, deliveryDate) " + "VALUES (?, ?, ?, ?, ?, ?)";
+        try { String insertOrderQuery = "INSERT INTO orders " + "(email, phone, totalPrice, orderDate, orderStatus, deliveryDate) " + "VALUES (?, ?, ?, ?, ?, ?)";
             
             // Get new orderNumber for inserted order.
-            insertedOrderNumber = runCustomUpdate(insertOrderQuery, order.getEmail(), order.getPhone(), order.getTotalPrice(), order.getOrderDate(), order.getOrderStatus(), order.getDeliveryDate());
+            String normalizedEmail = order.getEmail() == null ? null : order.getEmail().trim().toLowerCase(Locale.ROOT);
+            insertedOrderNumber = runCustomUpdate(insertOrderQuery, normalizedEmail, order.getPhone(), order.getTotalPrice(), order.getOrderDate(), order.getOrderStatus(), order.getDeliveryDate());
+
+            if (insertedOrderNumber > 0) {
+                saveOrderDetails(insertedOrderNumber, order);
+            }
         
         // If order insertion failed, print error message.
         } catch (SQLException sqlException) {
@@ -643,7 +726,7 @@ public class DatabaseInteract implements AutoCloseable {
         Order foundOrder = null;
 
         // Query database for matching order row.
-        try { List<Map<String, Object>> queryResults = runCustomQuery("SELECT orderNumber, email, phone, totalPrice, orderDate, orderStatus, deliveryDate FROM \"orders\" WHERE orderNumber = ? LIMIT 1", orderNumber);
+        try { List<Map<String, Object>> queryResults = runCustomQuery("SELECT orderNumber, email, phone, totalPrice, orderDate, orderStatus, deliveryDate FROM orders WHERE orderNumber = ? LIMIT 1", orderNumber);
 
             // If order row found, build Order object.
             if (!queryResults.isEmpty()) {
@@ -671,7 +754,8 @@ public class DatabaseInteract implements AutoCloseable {
         Order currentOrder = null;
 
         // Query database for matching order rows.
-        try {List<Map<String, Object>> queryResults = runCustomQuery("SELECT orderNumber, email, phone, totalPrice, orderDate, orderStatus, deliveryDate FROM \"orders\" WHERE email = ? ORDER BY orderDate DESC", email);
+        try {String normalizedEmail = email == null ? null : email.trim().toLowerCase(Locale.ROOT);
+            List<Map<String, Object>> queryResults = runCustomQuery("SELECT orderNumber, email, phone, totalPrice, orderDate, orderStatus, deliveryDate FROM orders WHERE email = ? ORDER BY orderDate DESC", normalizedEmail);
             
             // For each row in query results, build Order object and add to list.
             for (Map<String, Object> resultRow : queryResults) {
@@ -698,7 +782,7 @@ public class DatabaseInteract implements AutoCloseable {
         Order currentOrder = null;
 
         // Query database for all order rows, ordered by orderDate descending.
-        try {List<Map<String, Object>> queryResults = runCustomQuery("SELECT orderNumber, email, phone, totalPrice, orderDate, orderStatus, deliveryDate FROM \"orders\" ORDER BY orderDate DESC");
+        try {List<Map<String, Object>> queryResults = runCustomQuery("SELECT orderNumber, email, phone, totalPrice, orderDate, orderStatus, deliveryDate FROM orders ORDER BY orderDate DESC");
             
             // For each row in query results, build Order object and add to list.
             for (Map<String, Object> resultRow : queryResults) {
@@ -724,7 +808,7 @@ public class DatabaseInteract implements AutoCloseable {
         boolean success = false;
 
         // Update order status in database.
-        try { int updatedRows = runCustomUpdate("UPDATE \"orders\" SET orderStatus = ? WHERE orderNumber = ?", newStatus.name(), orderNumber);
+        try { int updatedRows = runCustomUpdate("UPDATE orders SET orderStatus = ? WHERE orderNumber = ?", newStatus.name(), orderNumber);
             success = updatedRows > 0;
 
         // If order status update failed, print error message.
@@ -743,7 +827,7 @@ public class DatabaseInteract implements AutoCloseable {
         boolean success = false;
 
         // Delete order row from database.
-        try { int deleted = runCustomUpdate("DELETE FROM \"orders\" WHERE orderNumber = ?", orderNumber);
+        try { int deleted = runCustomUpdate("DELETE FROM orders WHERE orderNumber = ?", orderNumber);
             success = deleted > 0;
 
         // If order removal failed, print error message.
@@ -784,7 +868,7 @@ public class DatabaseInteract implements AutoCloseable {
         try {
             List<Map<String, Object>> queryResults = runCustomQuery(
                 "SELECT DISTINCT o.orderNumber, o.email, o.phone, o.totalPrice, o.orderDate, o.orderStatus, o.deliveryDate " +
-                "FROM \"order\" o " +
+                "FROM orders o " +
                 "JOIN orderDetails od ON o.orderNumber = od.orderNumber " +
                 "JOIN product p ON od.productNumber = p.productNumber " +
                 "WHERE p.productBrand = ? " +
