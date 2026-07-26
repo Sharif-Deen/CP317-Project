@@ -9,6 +9,7 @@ package server;
 import database.DatabaseInteract;
 import features.Order;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -37,22 +38,6 @@ public class OrderHandler implements HttpHandler {
     //  HELPER METHODS:
     // =================
 
-
-    // Helper method to send JSON response.
-    // paramaters: exchange - HttpExchange object representing HTTP request and response.
-    //             statusCode - HTTP status code to send.
-    //             jsonResponse - JSON string to send in the response body.
-    private static void sendJson(HttpExchange exchange, int statusCode, String jsonResponse) throws IOException {
-        // Set the response headers and status code.
-        exchange.getResponseHeaders().set("Content-Type", "application/json");
-        exchange.sendResponseHeaders(statusCode, jsonResponse.getBytes(StandardCharsets.UTF_8).length);
-
-        // Write the JSON response to the output stream.
-        try (OutputStream outputStream = exchange.getResponseBody()) {
-            outputStream.write(jsonResponse.getBytes(StandardCharsets.UTF_8));
-        }
-        return;
-    }
 
     // Helper to parse query parameters from URI into a map.
     // paramaters: uri - URI object containing the request URI.
@@ -131,7 +116,7 @@ public class OrderHandler implements HttpHandler {
 
                 // Convert list of orders to JSON and send response.
                 String jsonResponse = gsonInstance.toJson(orderList);
-                sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse);
+                ServerUtil.sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse);
     
             // Handle exceptions that occur during database interaction.
             } catch (Exception exception) {
@@ -139,7 +124,7 @@ public class OrderHandler implements HttpHandler {
                 
                 // Print stack trace.
                 exception.printStackTrace();
-                sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"error\": \"Failed to retrieve orders from the database.\"}");
+                ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"error\": \"Failed to retrieve orders from the database.\"}");
             }
 
         }
@@ -154,6 +139,16 @@ public class OrderHandler implements HttpHandler {
                 String requestBodyString = readRequestBody(exchange.getRequestBody());
                 Order orderToInsert = gsonInstance.fromJson(requestBodyString, Order.class);
 
+                if (orderToInsert == null) {
+                    ServerUtil.sendJson(exchange, ServerUtil.STATUS_BAD_REQUEST, "{\"status\": \"error\", \"message\": \"Order payload is invalid\"}");
+                    return;
+                }
+
+                if (orderToInsert.getProducts() == null || orderToInsert.getProducts().isEmpty()) {
+                    ServerUtil.sendJson(exchange, ServerUtil.STATUS_BAD_REQUEST, "{\"status\": \"error\", \"message\": \"Order must include at least one product\"}");
+                    return;
+                }
+
                 // Add order to database and get new order number.
                 int newOrderNumber = database.addOrder(orderToInsert);
 
@@ -166,23 +161,26 @@ public class OrderHandler implements HttpHandler {
                     jsonResponse.addProperty("orderNumber", newOrderNumber);
                     jsonResponse.addProperty("message", "Order added successfully");
                     
-                    sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse.toString());
+                    ServerUtil.sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse.toString());
 
                 // If new order number is not positive, addition failed.
                 } else {
                     jsonResponse.addProperty("status", "error");
                     jsonResponse.addProperty("message", "Failed to add order");
                     
-                    sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, jsonResponse.toString());
+                    ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, jsonResponse.toString());
                 }
 
             // Handle exceptions that occur during database interaction.
+            } catch (JsonSyntaxException exception) {
+                System.err.println("Invalid order payload: " + exception.getMessage());
+                ServerUtil.sendJson(exchange, ServerUtil.STATUS_BAD_REQUEST, "{\"status\": \"error\", \"message\": \"Invalid order payload\"}");
             } catch (Exception exception) {
                 System.err.println("Error adding order: " + exception.getMessage());
 
                 // Print stack trace.
                 exception.printStackTrace();
-                sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to add order to the database.\"}");
+                ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\", \"message\": \"Failed to add order to the database.\"}");
             }
         }
         return;

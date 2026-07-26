@@ -1,0 +1,123 @@
+package database;
+
+import features.Product;
+import features.User;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+public class DataScript {
+    private static final String PRODUCTS_FILE = "src/database/products.txt";
+    private static final String USERS_FILE = "src/database/users.txt";
+    private String ordersFile = "orders.txt";
+
+    public static void main(String[] args) {
+        loadProducts();
+        loadUsers();
+    }
+
+    private static void loadProducts() {
+        try (DatabaseInteract db = new DatabaseInteract()) {
+            Path productsPath = Path.of(PRODUCTS_FILE).toAbsolutePath().normalize();
+
+            if (!Files.exists(productsPath)) {
+                throw new IOException("Product file not found: " + productsPath);
+            }
+
+            List<String> lines = Files.readAllLines(productsPath);
+            for (String line : lines) {
+                if (line == null || line.isBlank()) {
+                    continue;
+                }
+
+                String[] parts = line.split("\\|", -1);
+                if (parts.length < 8) {
+                    continue;
+                }
+
+                String productName = parts[0].trim();
+                double price = Double.parseDouble(parts[1].trim());
+                String category = parts[2].trim();
+                String brand = parts[3].trim();
+                String tags = parts[4].trim();
+                String description = parts[5].trim();
+                String location = parts[6].trim();
+                int stock = Integer.parseInt(parts[7].trim());
+
+                Product product = new Product(0, productName, price, category, brand, tags, description, location, stock);
+                db.addProduct(product);
+            }
+
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void loadUsers() {
+        try (DatabaseInteract db = new DatabaseInteract()) {
+            Path productsPath = Path.of(PRODUCTS_FILE).toAbsolutePath().normalize();
+            if (!Files.exists(productsPath)) {
+                throw new IOException("Product file not found: " + productsPath);
+            }
+
+            Set<String> brands = new LinkedHashSet<>();
+            List<String> lines = Files.readAllLines(productsPath);
+            for (String line : lines) {
+                if (line == null || line.isBlank()) {
+                    continue;
+                }
+
+                String[] parts = line.split("\\|", -1);
+                if (parts.length >= 4) {
+                    String brand = parts[3].trim();
+                    if (!brand.isBlank()) {
+                        brands.add(brand);
+                    }
+                }
+            }
+
+            List<String> userLines = new ArrayList<>();
+            for (String brand : brands) {
+                String username = brand;
+                String email = username + "@laurierfs.com";
+                String password = "pass123";
+
+                if (db.findUserByUsername(username) == null) {
+                    db.addUser(new User(0, username, password, "distributor", email));
+                }
+
+                userLines.add(email + "|" + username + "|" + password + "|distributor");
+            }
+
+            String[][] customers = {
+                    {"cust1", "pw1234"},
+                    {"cust2", "abc1234"},
+                    {"cust3", "mypass1"}
+            };
+
+            for (String[] customer : customers) {
+                String username = customer[0];
+                String password = customer[1];
+                String email = username + "@laurierfs.com";
+
+                if (db.findUserByUsername(username) == null) {
+                    db.addUser(new User(0, username, password, "customer", email));
+                }
+
+                userLines.add(email + "|" + username + "|" + password + "|customer");
+            }
+
+            Path usersPath = Path.of(USERS_FILE).toAbsolutePath().normalize();
+            Files.createDirectories(usersPath.getParent());
+            Files.write(usersPath, userLines);
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
