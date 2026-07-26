@@ -75,7 +75,7 @@ export default function CheckoutPage() {
     try {
       const response = await createOrder(serverOrderPayload);
       const order = placeOrder({
-        id: "ORD-"+response.orderNumber || `ORD-${Date.now()}`,
+        id: response.orderNumber || `${Date.now()}`,
         items: items,
         subtotal: cartTotal,
         discount: bulkDiscount,
