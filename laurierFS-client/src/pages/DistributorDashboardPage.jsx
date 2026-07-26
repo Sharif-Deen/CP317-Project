@@ -20,6 +20,8 @@ const DistributorDashboardPage = () => {
     const [newItemStock, setNewItemStock] = useState("");
     const [newItemCategory, setNewItemCategory] = useState("");
     const [newItemLocation, setNewItemLocation] = useState("");
+    const [newItemTags, setNewItemTags] = useState(""); // Added
+    const [newItemDescription, setNewItemDescription] = useState(""); // Added
     const [addItemError, setAddItemError] = useState("");
 
     const loadCatalog = async () => {
@@ -71,8 +73,8 @@ const DistributorDashboardPage = () => {
                 price,
                 type: newItemCategory,
                 brand: "",
-                tags: [],
-                description: "",
+                tags: newItemTags.split(',').map(tag => tag.trim()), // Added
+                description: newItemDescription, // Added
                 location: newItemLocation,
                 stock,
             });
@@ -82,6 +84,8 @@ const DistributorDashboardPage = () => {
             setNewItemStock("");
             setNewItemCategory("");
             setNewItemLocation("");
+            setNewItemTags(""); // Added
+            setNewItemDescription(""); // Added
             setAddItemError("");
             await loadCatalog();
         } catch (err) {
@@ -96,6 +100,13 @@ const DistributorDashboardPage = () => {
         } catch (err) {
             setCatalogError("Failed to remove product from the catalog.");
         }
+    };
+
+    // Handler for Stock Adjustment
+    const updateStock = (itemId, delta) => {
+        setItems(items.map(item => 
+            item.id === itemId ? { ...item, stock: Math.max(0, parseInt(item.stock) + delta) } : item
+        ));
     };
 
     return (
@@ -188,6 +199,28 @@ const DistributorDashboardPage = () => {
                                     className="lfs-input"
                                 />
                             </div>
+                            {/* New Tags Field */}
+                            <div className="input-group">
+                                <label>Tags (comma separated)</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. organic, dairy"
+                                    value={newItemTags}
+                                    onChange={(e) => setNewItemTags(e.target.value)}
+                                    className="lfs-input"
+                                />
+                            </div>
+                            {/* New Description Field */}
+                            <div className="input-group">
+                                <label>Description</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter description..."
+                                    value={newItemDescription}
+                                    onChange={(e) => setNewItemDescription(e.target.value)}
+                                    className="lfs-input"
+                                />
+                            </div>
                             {addItemError && <p className="dashboard-error">{addItemError}</p>}
                             <button className="lfs-primary-btn" onClick={handleAddItem} type="button">
                                 Add to Catalog
@@ -215,9 +248,11 @@ const DistributorDashboardPage = () => {
                                             <td className="font-medium">{item.name}</td>
                                             <td>${item.price.toFixed(2)}</td>
                                             <td>
-                                                <span className={`stock-badge ${item.stock > 50 ? 'stock-high' : 'stock-low'}`}>
-                                                    {item.stock} units
+                                                <button onClick={() => updateStock(item.id, -1)}>-</button>
+                                                <span className={`stock-badge ${item.stock > 50 ? 'stock-high' : 'stock-low'}`} style={{ margin: "0 10px" }}>
+                                                    {item.stock}
                                                 </span>
+                                                <button onClick={() => updateStock(item.id, 1)}>+</button>
                                             </td>
                                             <td className="text-right">
                                                 <button className="remove-btn" onClick={() => handleRemoveItem(item.id)}>Remove</button>
