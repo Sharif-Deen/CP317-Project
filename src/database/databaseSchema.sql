@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS orders (
     orderDate DATE NOT NULL,
     orderStatus TEXT NOT NULL,
     deliveryDate DATE,
-    FOREIGN KEY email REFERENCES users(email)
+    FOREIGN KEY (email) REFERENCES users(email)
 );
 
 CREATE TABLE IF NOT EXISTS orderDetails (
