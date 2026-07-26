@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../components/Button.jsx";
 import InputField from "../components/InputField.jsx";
 import Logo from "../components/Logo.jsx";
-import { getProducts, addProduct, deleteProduct } from "../services/productService.js";
+import { getProducts, addProduct, deleteProduct, editProduct, updateProductStock } from "../services/productService.js";
 import "../styles/DistributorDashboardPage.css";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -25,6 +25,10 @@ const DistributorDashboardPage = () => {
     const [newItemTags, setNewItemTags] = useState(""); // Added
     const [newItemDescription, setNewItemDescription] = useState(""); // Added
     const [addItemError, setAddItemError] = useState("");
+
+    // States for editing an existing item
+    const [editingItem, setEditingItem] = useState(null);
+    const [editError, setEditError] = useState("");
 
     const loadCatalog = async () => {
         try {
@@ -98,6 +102,35 @@ const DistributorDashboardPage = () => {
         }
     };
 
+    const handleEditSave = async () => {
+        const price = parseFloat(editingItem.price);
+        const stock = parseInt(editingItem.stock, 10);
+
+        if (!editingItem.name || Number.isNaN(price) || Number.isNaN(stock)) {
+            setEditError("Please fill in a valid name, price, and stock.");
+            return;
+        }
+
+        try {
+            await editProduct({
+                id: editingItem.id,
+                name: editingItem.name,
+                price: price,
+                type: editingItem.type,
+                brand: editingItem.brand,
+                tags: typeof editingItem.tags === "string" ? editingItem.tags.split(",").map(t => t.trim()) : editingItem.tags,
+                description: editingItem.description,
+                location: editingItem.location,
+                stock: stock,
+            });
+            setEditingItem(null);
+            setEditError("");
+            await loadCatalog();
+        } catch (err) {
+            setEditError("Failed to save changes.");
+        }
+    };
+
     const handleRemoveItem = async (itemId) => {
         try {
             await deleteProduct(itemId);
@@ -108,10 +141,16 @@ const DistributorDashboardPage = () => {
     };
 
     // Handler for Stock Adjustment
-    const updateStock = (itemId, delta) => {
-        setItems(items.map(item => 
-            item.id === itemId ? { ...item, stock: Math.max(0, parseInt(item.stock) + delta) } : item
-        ));
+    const updateStock = async (itemId, delta) => {
+        const item = items.find(i => i.id === itemId);
+        if (!item) return;
+        const newStock = Math.max(0, parseInt(item.stock) + delta);
+        try {
+            await updateProductStock(itemId, newStock);
+            await loadCatalog();
+        } catch (err) {
+            setCatalogError("Failed to update stock.");
+        }
     };
 
     return (
@@ -249,6 +288,18 @@ const DistributorDashboardPage = () => {
                                 </thead>
                                 <tbody>
                                     {filteredItems.map((item) => (
+                                        editingItem && editingItem.id === item.id ? (
+                                            <tr key={item.id}>
+                                                <td><input className="lfs-input" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} /></td>
+                                                <td><input className="lfs-input" value={editingItem.price} onChange={e => setEditingItem({...editingItem, price: e.target.value})} /></td>
+                                                <td><input className="lfs-input" type="number" value={editingItem.stock} onChange={e => setEditingItem({...editingItem, stock: e.target.value})} /></td>
+                                                <td className="text-right">
+                                                    <button className="lfs-primary-btn" onClick={handleEditSave} style={{ marginRight: "8px" }}>Save</button>
+                                                    <button className="remove-btn" onClick={() => { setEditingItem(null); setEditError(""); }}>Cancel</button>
+                                                    {editError && <p style={{ color: "red", fontSize: "12px" }}>{editError}</p>}
+                                                </td>
+                                            </tr>
+                                        ) : (
                                         <tr key={item.id}>
                                             <td className="font-medium">{item.name}</td>
                                             <td>${item.price.toFixed(2)}</td>
@@ -260,9 +311,11 @@ const DistributorDashboardPage = () => {
                                                 <button onClick={() => updateStock(item.id, 1)}>+</button>
                                             </td>
                                             <td className="text-right">
+                                                <button className="lfs-primary-btn" onClick={() => setEditingItem({...item})} style={{ marginRight: "8px" }}>Edit</button>
                                                 <button className="remove-btn" onClick={() => handleRemoveItem(item.id)}>Remove</button>
                                             </td>
                                         </tr>
+                                        )
                                     ))}
                                 </tbody>
                             </table>
