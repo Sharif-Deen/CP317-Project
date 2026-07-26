@@ -18,9 +18,20 @@ public class ServerUtil {
     //static methods that set headers for communication with frontend
     public static void addCORSHeaders(HttpExchange exchange) {
         Headers headers = exchange.getResponseHeaders();
-        headers.set("Access-Control-Allow-Origin", "*");
+        String origin = exchange.getRequestHeaders().getFirst("Origin");
+
+        if (origin != null && isLocalhostOrigin(origin)) {
+            headers.set("Access-Control-Allow-Origin", origin);
+        } else {
+            headers.set("Access-Control-Allow-Origin", "http://localhost:5173");
+        }
+
         headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         headers.set("Access-Control-Allow-Headers", "Content-Type");
+    }
+
+    private static boolean isLocalhostOrigin(String origin) {
+        return origin.startsWith("http://localhost:") || origin.startsWith("https://localhost:");
     }
 
     public static boolean handlePreflight(HttpExchange exchange) throws IOException {

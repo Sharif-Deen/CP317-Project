@@ -14,7 +14,7 @@ public class Server {
         server.createContext("/api/products", new ProductHandler());
         server.createContext("/api/login", new LoginHandler());
         server.createContext("/api/signup", new SignupHandler());
-        // server.createContext("/api/orders", new OrdersHandler());
+        server.createContext("/api/orders", new OrderHandler());
         
         server.setExecutor(null);
         server.start();
