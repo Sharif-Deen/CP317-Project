@@ -1,0 +1,39 @@
+/* OrderTrackingModal.css */
+.modal-overlay { 
+    position: fixed; top:0; left:0; right:0; bottom:0; 
+    background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000;
+}
+.modal-content { 
+    background: white; padding: 40px; border-radius: 12px; 
+    width: 600px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.stepper { 
+    display: flex; justify-content: space-between; 
+    margin: 40px 0; position: relative; padding: 0 10px;
+}
+
+.step { 
+    position: relative; display: flex; flex-direction: column; align-items: center; 
+    flex: 1;
+}
+
+/* Connector line alignment */
+.step:not(:last-child)::after {
+    content: ''; position: absolute; top: 22px; left: 60%; width: 80%;
+    height: 4px; background: #e0e0e0; z-index: 0;
+}
+.step.active:not(:last-child)::after { background: #28a745; }
+
+.step-circle { 
+    width: 45px; height: 45px; border: 3px solid #e0e0e0; 
+    border-radius: 50%; display: flex; justify-content: center; 
+    align-items: center; background: white; z-index: 1;
+    font-weight: bold; font-size: 1rem; color: #999;
+}
+.step.active .step-circle { border-color: #28a745; background: #28a745; color: white; }
+
+.step-label { margin-top: 10px; font-weight: 600; color: #666; }
+.step.active .step-label { color: #28a745; }
+
+.close-btn { margin-top: 20px; padding: 10px 20px; cursor: pointer; }

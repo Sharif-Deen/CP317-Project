@@ -6,6 +6,7 @@ import Logo from "../components/Logo.jsx"
 import "../styles/OrdersPage.css"
 import { useAuth } from "../context/AuthContext.jsx"
 import { getOrdersByUser } from "../services/orderService.js"
+import OrderTrackingModal from '../components/OrderTrackingModal'; 
 
 const OrdersPage = () => {
     const navigate = useNavigate()
@@ -14,6 +15,7 @@ const OrdersPage = () => {
     const { addToCart, cartCount } = useCart()
     const [toast, setToast] = useState(null)
     const [confirmCancel, setConfirmCancel] = useState(null)
+    const [trackingOrder, setTrackingOrder] = useState(null);
 
     const setOrders = async () => {
         // load the logged in user's order history
@@ -100,6 +102,15 @@ const OrdersPage = () => {
                 </div>
             )}
 
+            {/* Tracking Modal */}
+            {trackingOrder && (
+                <OrderTrackingModal 
+                    isOpen={!!trackingOrder} 
+                    onClose={() => setTrackingOrder(null)} 
+                    orderData={trackingOrder} 
+                />
+            )}
+
             <div className="orders-body">
                 <h2 className="orders-title">Order History</h2>
 
@@ -143,38 +154,46 @@ const OrdersPage = () => {
                                         <span className="order-total">Total: ${order.total.toFixed(2)}</span>
                                     </div>
                                     <div className="order-actions">
-    <button 
-        className="reorder-btn"
-        onClick={() => handleReorder(order)}
-    >
-        Reorder
-    </button>
+                                        <button 
+                                            className="reorder-btn"
+                                            onClick={() => handleReorder(order)}
+                                        >
+                                            Reorder
+                                        </button>
 
-    {order.status === "confirmed" && (
-        <>
-            <button
-                className="return-order-btn"
-                onClick={() =>
-                    navigate("/returns", {
-                        state: {
-                            orderId: order.id,
-                            items: order.items
-                        }
-                    })
-                }
-            >
-                Return Product
-            </button>
+                                        {/* Added Track Order Button */}
+                                        <button 
+                                            className="track-btn" 
+                                            onClick={() => setTrackingOrder(order)}
+                                        >
+                                            Track Order
+                                        </button>
 
-            <button
-                className="cancel-order-btn"
-                onClick={() => setConfirmCancel(order.id)}
-            >
-                Cancel Order
-            </button>
-        </>
-    )}
-</div>
+                                        {order.status === "confirmed" && (
+                                            <>
+                                                <button
+                                                    className="return-order-btn"
+                                                    onClick={() =>
+                                                        navigate("/returns", {
+                                                            state: {
+                                                                orderId: order.id,
+                                                                items: order.items
+                                                            }
+                                                        })
+                                                    }
+                                                >
+                                                    Return Product
+                                                </button>
+
+                                                <button
+                                                    className="cancel-order-btn"
+                                                    onClick={() => setConfirmCancel(order.id)}
+                                                >
+                                                    Cancel Order
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         ))}
