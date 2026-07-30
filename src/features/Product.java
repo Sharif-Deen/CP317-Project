@@ -13,12 +13,17 @@ public class Product {
     private String location;
     private int stock;
 
-    public Product(int id, String name, double price, String type, String brand, String tags, String description, String location, int stock) {
-        this.id = id;
+    // Used for orders (other fields unnecessary for order info)
+    public Product(int id, String name, double price, String brand){
+        this.id=id;
         this.name = name;
         this.price = price;
-        this.type = type;
         this.brand = brand;
+    }
+
+    public Product(int id, String name, double price, String type, String brand, String tags, String description, String location, int stock) {
+        this(id, name, price, brand);
+        this.type = type;
         this.tags = Arrays.asList(tags.split(","));
         this.description = description;
         this.location = location;

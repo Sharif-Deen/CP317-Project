@@ -26,10 +26,32 @@ const user =
 
 const order =
 {
-    "id": 1,
-    "email": "example@gmail.com",
-    "totalPrice": 10.99,
-    "orderDate": "2026-07-23 12:12:12",
-    "orderStatus": "Delivered",
-    "deliveryDate": "2026-07-31" 
+  "orderId": 100,
+  "email": "user@example.com",
+  "phone": "519-123-4567",
+  "totalPrice": 9.25,
+  "orderDate": "2026-07-26",
+  "orderStatus": "confirmed",
+  "items": [
+    {
+      "product": {
+        "id": 1,
+        "name": "Milk",
+        "price": 3.5,
+        "brand": "FreshFields",
+        "stock": 0
+      },
+      "quantity": 2
+    },
+    {
+      "product": {
+        "id": 2,
+        "name": "Bread",
+        "price": 2.25,
+        "brand": "FreshFields",
+        "stock": 0
+      },
+      "quantity": 1
+    }
+  ]
 }

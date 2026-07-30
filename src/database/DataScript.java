@@ -146,22 +146,22 @@ public class DataScript {
 
             LocalDate orderDate = LocalDate.now().minusDays(3 - index);
             LocalDate deliveryDate = orderDate.plusDays(2 + index);
+            
 
-            List<Order.OrderItem> orderItems = new ArrayList<>();
+            Order order = new Order(0, email, phone, orderDate.format(DATE_FORMATTER), status, deliveryDate.format(DATE_FORMATTER), null);
             for (int itemIndex = 0; itemIndex < 3; itemIndex++) {
                 Product product = products.get((index + itemIndex) % products.size());
-                orderItems.add(new Order.OrderItem(0, product.getName(), 1, product.getPrice()));
+                order.addItem(new Product(0, product.getName(), product.getPrice(), "FreshFields"), 1);
             }
 
-            Order order = new Order(0, email, phone, orderDate.format(DATE_FORMATTER), status, deliveryDate.format(DATE_FORMATTER), orderItems);
             int orderNumber = db.addOrder(order);
             if (orderNumber > 0) {
                 StringBuilder productNames = new StringBuilder();
-                for (int itemIndex = 0; itemIndex < orderItems.size(); itemIndex++) {
+                for (int itemIndex = 0; itemIndex < order.getProducts().size(); itemIndex++) {
                     if (itemIndex > 0) {
                         productNames.append(",");
                     }
-                    productNames.append(orderItems.get(itemIndex).getProductName());
+                    productNames.append(order.getProducts().get(itemIndex).getProductName());
                 }
 
                 orderLines.add(orderNumber + "|" + email + "|" + phone + "|" + String.format(Locale.US, "%.2f", order.getTotalPrice())

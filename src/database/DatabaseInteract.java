@@ -293,8 +293,8 @@ public class DatabaseInteract implements AutoCloseable {
 
         // Build Order object from row.
         order = new Order((int) resultRow.get("orderNumber"), (String) resultRow.get("email"), (String) resultRow.get("phone"), ((Number) resultRow.get("totalPrice")).doubleValue(), (String) resultRow.get("orderDate"), (String) resultRow.get("orderStatus"), (String) resultRow.get("deliveryDate"));
-        int orderNumber = ((Number) resultRow.get("orderNumber")).intValue();
-        order.setProducts(loadOrderProducts(orderNumber));
+        int orderNumber = order.getOrderId();
+        loadOrderProducts(order, orderNumber);
 
         return order;
     }
@@ -671,10 +671,9 @@ public class DatabaseInteract implements AutoCloseable {
         }
     }
 
-    private List<Order.OrderItem> loadOrderProducts(int orderNumber) throws SQLException {
-        List<Order.OrderItem> orderProducts = new ArrayList<>();
+    private void loadOrderProducts(Order order, int orderNumber) throws SQLException {
         List<Map<String, Object>> queryResults = runCustomQuery(
-            "SELECT od.productNumber, od.quantity, od.price, p.productName " +
+            "SELECT od.productNumber, od.quantity, od.price, p.productName, p.productBrand " +
             "FROM orderDetails od " +
             "JOIN product p ON od.productNumber = p.productNumber " +
             "WHERE od.orderNumber = ? ORDER BY od.productNumber",
@@ -686,10 +685,12 @@ public class DatabaseInteract implements AutoCloseable {
             int quantity = ((Number) resultRow.get("quantity")).intValue();
             double price = ((Number) resultRow.get("price")).doubleValue();
             String productName = (String) resultRow.get("productName");
-            orderProducts.add(new Order.OrderItem(productNumber, productName, quantity, price));
+            String productBrand = (String) resultRow.get("productBrand");
+            Product prod = new Product(productNumber, productName, price, productBrand);
+            order.addItem(prod, quantity);
         }
 
-        return orderProducts;
+        return;
     }
 
     // Inserts new order row into database.
@@ -867,7 +868,7 @@ public class DatabaseInteract implements AutoCloseable {
         // Query database for orders that include products of the given brand.
         try {
             List<Map<String, Object>> queryResults = runCustomQuery(
-                "SELECT DISTINCT o.orderNumber, o.email, o.phone, o.totalPrice, o.orderDate, o.orderStatus, o.deliveryDate " +
+                "SELECT o.orderNumber, o.email, o.phone, o.totalPrice, o.orderDate, o.orderStatus, o.deliveryDate " +
                 "FROM orders o " +
                 "JOIN orderDetails od ON o.orderNumber = od.orderNumber " +
                 "JOIN product p ON od.productNumber = p.productNumber " +
@@ -885,6 +886,35 @@ public class DatabaseInteract implements AutoCloseable {
         // If order lookup failed, print error message.
         } catch (SQLException sqlException) {
             System.out.println("Failed to load orders for brand: " + sqlException.getMessage());
+            orderList = new ArrayList<>();
+        }
+        return orderList;
+    }
+
+    public List<Order> findOrdersByUsername(String username){
+        List<Order> orderList = new ArrayList<>();
+        Order currentOrder = null;
+
+        // Query database for orders that include products of the given brand.
+        try {
+            List<Map<String, Object>> queryResults = runCustomQuery(
+                "SELECT o.orderNumber, o.email, o.phone, o.totalPrice, o.orderDate, o.orderStatus, o.deliveryDate " +
+                "FROM orders o " +
+                "JOIN users us ON o.email = us.email " +
+                "WHERE us.username = ? " +
+                "ORDER BY o.orderDate DESC",
+                username
+            );
+
+            // For each row in query results, build Order object and add to list.
+            for (Map<String, Object> resultRow : queryResults) {
+                currentOrder = buildOrderFromRow(resultRow);
+                orderList.add(currentOrder);
+            }
+
+        // If order lookup failed, print error message.
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to load orders by username: " + sqlException.getMessage());
             orderList = new ArrayList<>();
         }
         return orderList;

@@ -1,4 +1,3 @@
-
 package features;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ public class Order {
     private String orderDate;    // stored as text in DB 
     private String orderStatus;
     private String deliveryDate;
-    private List<OrderItem> products = new ArrayList<>();
+    private List<OrderItem> items = new ArrayList<>();
 
     public Order() {
     }
@@ -22,14 +21,14 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public Order(int orderId, String email, String phone, String orderDate, String orderStatus, String deliveryDate, List<OrderItem> products) {
+    public Order(int orderId, String email, String phone, String orderDate, String orderStatus, String deliveryDate, List<OrderItem> items) {
         this.orderId = orderId;
         this.email = email;
         this.phone = phone;
         this.orderDate = orderDate;
         this.orderStatus = orderStatus;
         this.deliveryDate = deliveryDate;
-        this.products = products == null ? new ArrayList<>() : new ArrayList<>(products);
+        this.items = items == null ? new ArrayList<>() : new ArrayList<>(items);
         recalculateTotalPrice();
     }
 
@@ -47,6 +46,7 @@ public class Order {
     }
 
     public double getTotalPrice() {
+        recalculateTotalPrice();
         return totalPrice; 
     }
 
@@ -63,17 +63,24 @@ public class Order {
     }
 
     public List<OrderItem> getProducts() {
-        return products;
+        return items;
     }
 
-    public void setProducts(List<OrderItem> products) {
-        this.products = products == null ? new ArrayList<>() : new ArrayList<>(products);
+    public void addItem(Product product, int quantity){
+        OrderItem newItem = new OrderItem(product, quantity);
+        if(this.items==null) this.items = new ArrayList<>();
+        this.items.add(newItem);
         recalculateTotalPrice();
     }
 
-    private void recalculateTotalPrice() {
+    public void setProducts(List<OrderItem> items) {
+        this.items = items == null ? new ArrayList<>() : new ArrayList<>(items);
+        recalculateTotalPrice();
+    }
+
+    public void recalculateTotalPrice() {
         double calculatedTotal = 0.0;
-        for (OrderItem productItem : products) {
+        for (OrderItem productItem : items) {
             if (productItem != null) {
                 calculatedTotal += productItem.getLineTotal();
             }
@@ -103,40 +110,29 @@ public class Order {
     // Override toString method for easy printing of order details.
     @Override
     public String toString() {
-        return "Order #" + orderId + " | " + email + " | " + phone + " | $" + totalPrice + " | " + orderStatus;
+        String orderString = "Order #" + orderId + " | " + email + " | " + phone + " | $" + totalPrice + " | " + orderStatus + " | ";
+        for(OrderItem item : this.items){
+            orderString += item.product.getName() + ":" + item.quantity + ",";
+        }
+        return orderString;
     }
 
-    public static class OrderItem {
+    public class OrderItem {
         private Product product;
         private int quantity;
-        private int productId;
-        private String productName;
-        private double price;
 
         public OrderItem() {
         }
 
-        public OrderItem(int productId, String productName, int quantity, double price) {
-            this.productId = productId;
-            this.productName = productName;
+        public OrderItem(Product product, int quantity) {
+            this.product = product;
             this.quantity = quantity;
-            this.price = price;
         }
 
-        public int getProductId() {
-            syncFromProduct();
-            return productId;
-        }
-
-        public String getProductName() {
-            syncFromProduct();
-            return productName;
-        }
-
-        public double getPrice() {
-            syncFromProduct();
-            return price;
-        }
+        public Product getProduct() { return product; }
+        public int getProductId() { return product.getId(); }
+        public String getProductName() { return product.getName(); }
+        public double getPrice() { return product.getPrice(); }
 
         public int getQuantity() {
             return quantity;
@@ -146,31 +142,14 @@ public class Order {
             this.quantity = quantity;
         }
 
-        public Product getProduct() {
-            return product;
-        }
 
         public void setProduct(Product product) {
             this.product = product;
-            syncFromProduct();
         }
 
         public double getLineTotal() {
-            return Math.max(quantity, 0) * getPrice();
+            return Math.max(quantity, 0) * this.product.getPrice();
         }
 
-        private void syncFromProduct() {
-            if (product != null) {
-                if (productId <= 0 && product.getId() > 0) {
-                    productId = product.getId();
-                }
-                if ((productName == null || productName.isEmpty()) && product.getName() != null) {
-                    productName = product.getName();
-                }
-                if (price <= 0.0 && product.getPrice() > 0.0) {
-                    price = product.getPrice();
-                }
-            }
-        }
     }
 }

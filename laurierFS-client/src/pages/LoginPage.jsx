@@ -7,6 +7,7 @@ import Logo from "../components/Logo.jsx"
 import "../styles/LoginPage.css"
 import { login, signup } from "../services/authService"
 import { useAuth } from "../context/AuthContext.jsx"
+import { useOrders } from "../context/OrderContext.jsx";
 
 const CATEGORY_ROUTES = {
     distributor: "/distributor-dashboard",
@@ -32,12 +33,8 @@ const LoginPage = ()=> {
     const [formData, setFormData] = useState(EMPTY_FORM)
     const navigate = useNavigate()
     const { user, isAuthenticated, setLoggedInUser } = useAuth()
+    const { loadOrders } = useOrders()
     
-    //route to correct page if already logged in
-    // if(isAuthenticated){
-    //     const destination = CATEGORY_ROUTES[user.category] ?? "/"
-    //     navigate(destination)
-    // }
 
     const handleChange = (e) =>{
         const { name, value } = e.target
@@ -273,7 +270,7 @@ const LoginPage = ()=> {
                 <span className="auth-toggle-text">{isSignUp?"Already have an account? ":"Don't have an account? "}</span>
                 <a href="#" onClick={toggleAuth}>{isSignUp?"Login":"Sign Up"}</a>
             </div>
-            {!isSignUp && <a href="#">Forgot Password?</a>}
+            {/* {!isSignUp && <a href="#">Forgot Password?</a>} */}
             <a href="#" onClick={(e)=>{e.preventDefault();navigate("/search")}}>Continue as Guest</a>
             {/* <a href="#" onClick={(e) => { e.preventDefault(); navigate("/distributor-login") }}>Distributor Login Page</a> */}
         </div>

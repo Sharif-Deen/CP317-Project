@@ -141,8 +141,9 @@ const DistributorDashboardPage = () => {
 
     const handleRemoveItem = async (itemId) => {
         try {
+            setItems((prevItems) =>
+                prevItems.filter(userObj => (userObj.id !== itemId)));
             await deleteProduct(itemId);
-            await loadCatalog();
         } catch (err) {
             setCatalogError("Failed to remove product from the catalog.");
         }
@@ -170,15 +171,13 @@ const DistributorDashboardPage = () => {
             {/* LFS Branded Navbar */}
             <nav className="lfs-navbar">
                 <div className="nav-left">
-                    <Logo />
+                    <Logo light={true}/>
                 </div>
                 <div className="nav-center">
                     <span className="nav-tagline">Distributor Portal</span>
                 </div>
                 <div className="nav-right">
-                    <button className="lfs-outline-btn" onClick={()=>{logout(); navigate("/")}}>
-                        Logout
-                    </button>
+                    <button className="cart-btn" onClick={() => {logout();navigate("/")}}>👤 {isAuthenticated?"Logout":"Log in"}</button>
                 </div>
             </nav>
 

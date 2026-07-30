@@ -5,6 +5,7 @@ import { useOrders } from "../context/OrderContext";
 import Logo from "../components/Logo";
 import { createOrder } from "../services/orderService";
 import "../styles/CheckoutPage.css";
+import { useAuth } from "../context/AuthContext";
 
 const TAX_RATE = 0.13;
 
@@ -12,6 +13,7 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const { items, clearCart, cartTotal, bulkDiscount } = useCart();
   const { placeOrder } = useOrders();
+  const { user, isAuthenticated } = useAuth();
 
   const [step, setStep] = useState(1);
 
@@ -59,17 +61,13 @@ export default function CheckoutPage() {
     }
 
     const serverOrderPayload = {
-      email: "customer@example.com",
+      email: user.email,
       phone: shipping.phone,
+      totalPrice: 0, //price calculated in handler when received
       orderDate: new Date().toISOString().slice(0, 10),
       orderStatus: "confirmed",
       deliveryDate: null,
-      products: items.map(({ product, quantity }) => ({
-        productId: product.id,
-        productName: product.name,
-        quantity,
-        price: product.price,
-      })),
+      items: items
     };
 
     try {
@@ -100,6 +98,7 @@ export default function CheckoutPage() {
           <span className="header-tagline">Serving the Waterloo Region</span>
           <div className="nav-links">
             <button className="cancel-btn" onClick={() => navigate("/cart")}>Back to Cart</button>
+            <button className="cart-btn" onClick={() => {logout();navigate("/")}}>👤 {isAuthenticated?"Logout":"Log in"}</button>
           </div>
         </div>
         <div className="checkout-content">
@@ -119,7 +118,7 @@ export default function CheckoutPage() {
         <span className="header-tagline">Serving the Waterloo Region</span>
         <div className="nav-links">
           <button className="cancel-btn" onClick={() => navigate("/cart")}>Back to Cart</button>
-          <button className="profile-btn" onClick={() => navigate("/")}>👤</button>
+          <button className="cart-btn" onClick={() => {logout();navigate("/")}}>👤 {isAuthenticated?"Logout":"Log in"}</button>
         </div>
       </div>
 

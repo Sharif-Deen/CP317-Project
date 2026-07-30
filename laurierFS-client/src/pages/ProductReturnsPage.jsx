@@ -154,7 +154,7 @@ function ProductReturnsPage() {
             type="button"
             onClick={() => navigate("/orders")}
           >
-            Orders
+          📋 Orders
           </button>
 
           <button
@@ -162,7 +162,7 @@ function ProductReturnsPage() {
             type="button"
             onClick={() => navigate("/cart")}
           >
-            Cart
+           🛒 Cart
 
             <span className="cart-count">
               {cartCount}
@@ -174,7 +174,7 @@ function ProductReturnsPage() {
             type="button"
             onClick={handleAccountButton}
           >
-            {isAuthenticated ? "Logout" : "Log in"}
+          👤 {isAuthenticated ? "Logout" : "Log in"}
           </button>
         </div>
       </header>

@@ -14,3 +14,9 @@ export const createOrder = async (orderPayload) => {
 
   return data;
 };
+
+export const getOrdersByUser = async (username) => {
+  const response = await fetch (`${BASE_URL}/api/orders?username=${encodeURIComponent(username)}`)
+  if (!response.ok) throw new Error("Failed to fetch Orders");
+  return await response.json()
+}

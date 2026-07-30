@@ -1,22 +1,50 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useOrders } from "../context/OrderContext"
 import { useCart } from "../context/CartContext"
 import Logo from "../components/Logo.jsx"
 import "../styles/OrdersPage.css"
+import { useAuth } from "../context/AuthContext.jsx"
+import { getOrdersByUser } from "../services/orderService.js"
 
 const OrdersPage = () => {
     const navigate = useNavigate()
-    const { orders, cancelOrder } = useOrders()
+    const { user, logout, isAuthenticated } = useAuth()
+    const { orders, loadOrders, placeOrder, cancelOrder } = useOrders()
     const { addToCart, cartCount } = useCart()
     const [toast, setToast] = useState(null)
     const [confirmCancel, setConfirmCancel] = useState(null)
+
+    const setOrders = async () => {
+        // load the logged in user's order history
+        const userOrders = await getOrdersByUser(user.username)
+        const formattedOrders = (userOrders).map(orderRaw => {
+            const subtotal = Number(orderRaw.totalPrice ?? 0)
+
+            return {
+                id: orderRaw.orderId,
+                orderId: orderRaw.orderId,
+                items: orderRaw.items,
+                subtotal,
+                discount: 0,
+                tax: subtotal * 0.13,
+                total: subtotal * 1.13,
+                status: orderRaw.orderStatus ?? "confirmed",
+                date: orderRaw.orderDate,
+            }
+        })
+
+        loadOrders(formattedOrders)
+    }
+    useEffect(() => {
+        setOrders();
+    }, [])
 
     const handleReorder = (order) => {
         order.items.forEach(({ product, quantity }) => {
             addToCart(product, quantity)
         })
-        setToast(`Order ${order.id} items added to cart!`)
+        setToast(`Order ORD-${order.id} items added to cart!`)
         setTimeout(() => setToast(null), 2500)
     }
 
@@ -48,7 +76,7 @@ const OrdersPage = () => {
                     <button className="back-btn" onClick={() => navigate("/search")}>
                         ← Back to Shop
                     </button>
-                    <button className="profile-btn" onClick={() => navigate("/")}>👤</button>
+                    <button className="cart-btn" onClick={() => {logout();navigate("/")}}>👤 {isAuthenticated?"Logout":"Log in"}</button>
                 </div>
             </header>
 
@@ -88,16 +116,16 @@ const OrdersPage = () => {
                             <div key={order.id} className={`order-card ${order.status}`}>
                                 <div className="order-header-row">
                                     <div>
-                                        <h3 className="order-id">{order.id}</h3>
+                                        <h3 className="order-id">{"ORD-"+order.id}</h3>
                                         <p className="order-date">{formatDate(order.date)}</p>
                                     </div>
                                     <span className={`status-badge status-${order.status}`}>
-                                        {order.status === "confirmed" ? "Confirmed" : "Cancelled"}
+                                        {order.status}
                                     </span>
                                 </div>
 
                                 <div className="order-items-list">
-                                    {order.items.map(({ product, quantity }) => (
+                                    {order.items.map(({ product, quantity}) => (
                                         <div key={product.id} className="order-item-row">
                                             <span className="oi-name">{product.name}</span>
                                             <span className="oi-qty">x{quantity}</span>

@@ -7,7 +7,7 @@ export const OrderProvider = ({ children }) => {
 
     const placeOrder = (orderData) => {
         const newOrder = {
-            id: "ORD-"+orderData.id || "ORD-" + Date.now(),
+            id: orderData.id ||  Date.now(),
             items: orderData.items,
             subtotal: orderData.subtotal,
             discount: orderData.discount || 0,
@@ -22,6 +22,10 @@ export const OrderProvider = ({ children }) => {
         return newOrder
     }
 
+    const loadOrders = (orderList) => {
+        setOrders(orderList)
+    }
+
     const cancelOrder = (orderId) => {
         setOrders(prev =>
             prev.map(o =>
@@ -33,7 +37,7 @@ export const OrderProvider = ({ children }) => {
     }
 
     return (
-        <OrderContext.Provider value={{ orders, placeOrder, cancelOrder }}>
+        <OrderContext.Provider value={{ orders, placeOrder, cancelOrder, loadOrders}}>
             {children}
         </OrderContext.Provider>
     )

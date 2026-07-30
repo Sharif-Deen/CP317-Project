@@ -2,11 +2,12 @@ import { useNavigate } from "react-router-dom"
 import { useCart, getBulkDiscount } from "../context/CartContext"
 import Logo from "../components/Logo.jsx"
 import "../styles/CartPage.css"
+import { useAuth } from "../context/AuthContext.jsx"
 
 const CartPage = () => {
     const navigate = useNavigate()
     const { items, removeFromCart, updateQuantity, clearCart, cartTotal, bulkDiscount, BULK_DISCOUNT_THRESHOLD } = useCart()
-
+    const { isAuthenticated } = useAuth()
     const TAX_RATE = 0.13
     const discountedSubtotal = cartTotal - bulkDiscount
     const tax = discountedSubtotal * TAX_RATE
@@ -23,7 +24,7 @@ const CartPage = () => {
                     <button className="back-btn" onClick={() => navigate("/search")}>
                         ← Continue Shopping
                     </button>
-                    <button className="profile-btn" onClick={() => navigate("/")}>👤</button>
+                    <button className="back-btn" onClick={() => {logout();navigate("/")}}>👤 {isAuthenticated?"Logout":"Log in"}</button>
                 </div>
             </header>
 

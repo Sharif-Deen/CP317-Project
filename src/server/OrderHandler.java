@@ -108,9 +108,13 @@ public class OrderHandler implements HttpHandler {
                     // If "brand" parameter, fetch orders by brand.
                     orderList = database.findOrdersByBrand(queryParameters.get("brand"));
 
+                } else if (queryParameters.containsKey("username")){
+                    orderList = database.findOrdersByUsername(queryParameters.get("username"));
+
                 } else {
                     // If no specific parameter, fetch all orders.
                     orderList = database.findAllOrders();
+
                 }
 
                 // Convert list of orders to JSON and send response.
@@ -123,7 +127,7 @@ public class OrderHandler implements HttpHandler {
                 
                 // Print stack trace.
                 exception.printStackTrace();
-                ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"error\": \"Failed to retrieve orders from the database.\"}");
+                ServerUtil.sendJson(exchange, ServerUtil.STATUS_SERVER_ERR, "{\"status\": \"error\",\"message\": \"Failed to retrieve orders from the database.\"}");
             }
 
         }
@@ -142,11 +146,14 @@ public class OrderHandler implements HttpHandler {
                     ServerUtil.sendJson(exchange, ServerUtil.STATUS_BAD_REQUEST, "{\"status\": \"error\", \"message\": \"Order payload is invalid\"}");
                     return;
                 }
-
+                
                 if (orderToInsert.getProducts() == null || orderToInsert.getProducts().isEmpty()) {
                     ServerUtil.sendJson(exchange, ServerUtil.STATUS_BAD_REQUEST, "{\"status\": \"error\", \"message\": \"Order must include at least one product\"}");
                     return;
                 }
+
+                // Update price
+                orderToInsert.recalculateTotalPrice();
 
                 // Add order to database and get new order number.
                 int newOrderNumber = database.addOrder(orderToInsert);
