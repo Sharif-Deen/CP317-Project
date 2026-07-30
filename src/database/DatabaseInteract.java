@@ -919,5 +919,30 @@ public class DatabaseInteract implements AutoCloseable {
         }
         return orderList;
     }
+// =================
+    // ANALYTICS METHODS:
+    // =================
 
+    
+   public List<Map<String, Object>> getAllSalesAnalytics() {
+    List<Map<String, Object>> analyticsResults = new ArrayList<>();
+    
+    try {
+        // We removed the "WHERE p.productBrand = ?" clause.
+        // Now it grabs all products and calculates totals for everything.
+        String sqlQuery = 
+            "SELECT p.productNumber as id, p.productName as name, " +
+            "SUM(od.quantity) as sold, SUM(od.quantity * od.price) as revenue " +
+            "FROM orderDetails od " +
+            "JOIN product p ON od.productNumber = p.productNumber " +
+            "GROUP BY p.productNumber, p.productName " +
+            "ORDER BY revenue DESC";
+            
+        analyticsResults = runCustomQuery(sqlQuery); // No parameters needed anymore
+    } catch (SQLException sqlException) {
+        System.out.println("Failed to load analytics: " + sqlException.getMessage());
+    }
+    
+    return analyticsResults;
+}
 }

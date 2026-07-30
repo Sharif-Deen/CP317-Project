@@ -28,7 +28,8 @@ export const loginDistributor = async (email, password) => {
     const response = await fetch(`${BASE_URL}/api/login`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: email, password, category: "distributor", email })
+        // FIXED: Java specifically requires the key "identifier" to process the login
+        body: JSON.stringify({ identifier: email, password }) 
     })
     const data = await response.json()
     if (!response.ok) throw new Error(data.message || "Invalid email or password")

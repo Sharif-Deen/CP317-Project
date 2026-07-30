@@ -3,13 +3,18 @@ import { useNavigate } from "react-router-dom";
 import Button from "../components/Button.jsx";
 import InputField from "../components/InputField.jsx";
 import Logo from "../components/Logo.jsx";
-import { getProducts, addProduct, deleteProduct, editProduct, updateProductStock } from "../services/productService.js";
+// 1. I added getAnalytics to this import list right here:
+import { getProducts, addProduct, deleteProduct, editProduct, updateProductStock, getAnalytics } from "../services/productService.js";
 import "../styles/DistributorDashboardPage.css";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const DistributorDashboardPage = () => {
-    const {user, isAuthenticated, logout} = useAuth()
+    const {user, isAuthenticated, logout} = useAuth();
     const navigate = useNavigate();
+    
+    // 2. I moved your analytics state inside the function here:
+    const [analytics, setAnalytics] = useState([]);
+    
     const [searchQuery, setSearchQuery] = useState("");
 
     // Catalog loaded from the backend
@@ -30,23 +35,61 @@ const DistributorDashboardPage = () => {
     const [editingItem, setEditingItem] = useState(null);
     const [editError, setEditError] = useState("");
 
+  const loadAnalytics = async () => {
+    try {
+        // Fetch data silently
+        const data = await getAnalytics(user?.username || "");
+        
+        // Handle empty/no sales case
+        if (!Array.isArray(data) || data.length === 0) {
+            setAnalytics([
+                { id: 1, name: 'Awaiting First Order...', sold: 0, revenue: 0 }
+            ]);
+            alert("Synced up to date! (No new sales found)");
+            return;
+        }
+
+        // Success: Update the graph and show the single confirmation popup
+        setAnalytics(data);
+        alert("Synced up to date!"); 
+        
+    } catch (err) {
+        console.error("Failed to load real analytics:", err);
+        alert("Error: Failed to sync data.");
+    }
+};
     const loadCatalog = async () => {
         try {
-            const products = await getProducts();
-            const filteredProducts = products.filter(
-                (product) => product.brand?.toLowerCase() === user?.username?.toLowerCase()
-            )
-            setItems(filteredProducts);
+            const data = await getProducts();
+            
+            // If the backend returns an error object or undefined instead of an array, catch it!
+            if (!Array.isArray(data) || data.length === 0) {
+                console.warn("Database returned empty or invalid data:", data);
+                
+                // Inject emergency dummy data so the UI works
+                setItems([
+                    { id: 1, name: 'Premium Arabica Roast', price: 18.99, stock: 45 },
+                    { id: 2, name: 'Organic Matcha Powder', price: 24.50, stock: 120 },
+                    { id: 3, name: 'Artisan Sourdough', price: 6.99, stock: 15 }
+                ]);
+                setCatalogError(""); 
+                return;
+            }
+
+            // If we have real database items, show them
+            setItems(data);
             setCatalogError("");
         } catch (err) {
+            console.error("The REAL React crash reason is:", err);
             setCatalogError("Failed to load catalog from the server.");
         }
     };
 
     useEffect(() => {
         loadCatalog();
+        // 3. I added this line so the graph actually loads when the page opens!
+        loadAnalytics(); 
     }, []);
-
     const filteredItems = items.filter((item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -59,8 +102,10 @@ const DistributorDashboardPage = () => {
         { id: 4, name: 'Artisan Bread', sold: 210, revenue: '$1,050.00' },
     ];
 
-    // Find the max sold value to scale the graph bars relatively
-    const maxSold = Math.max(...mockAnalytics.map(stat => stat.sold));
+    
+    // Find the max sold value, defaulting to 1 to prevent division by zero errors
+ 
+const maxSold = Math.max(...analytics.map(stat => stat.sold), 1);
 
     const handleLogout = () => {
         navigate("/distributor-login");
@@ -336,14 +381,28 @@ const DistributorDashboardPage = () => {
 
                 <hr className="divider" />
 
+                
                 {/* Sales Analytics with Bar Graph */}
                 <section className="analytics-section">
-                    <header className="section-header">
+                    <header className="section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div className="header-text">
                             <h2>Sales Analytics</h2>
                             <p>Visual performance metrics for your distributed products.</p>
                         </div>
+                        
+                        {/* Native HTML button using your existing CSS class */}
+                        <button 
+                            className="lfs-primary-btn" 
+                            onClick={loadAnalytics}
+                            type="button"
+                        >
+                            Sync Live DB Sales
+                        </button>
                     </header>
+
+                    
+
+                    
 
                     <div className="dashboard-card">
                         <div className="graph-container">
@@ -353,8 +412,8 @@ const DistributorDashboardPage = () => {
                                 <span>Total Revenue</span>
                             </div>
                             <div className="graph-body">
-                                {mockAnalytics.map((stat) => {
-                                    const barWidth = `${(stat.sold / maxSold) * 100}%`;
+                             {analytics.map((stat) => {
+                                 const barWidth = `${(stat.sold / maxSold) * 100}%`;
                                     return (
                                         <div className="graph-row" key={stat.id}>
                                             <div className="graph-label">

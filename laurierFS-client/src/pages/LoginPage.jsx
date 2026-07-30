@@ -272,11 +272,9 @@ const LoginPage = ()=> {
             </div>
             {/* {!isSignUp && <a href="#">Forgot Password?</a>} */}
             <a href="#" onClick={(e)=>{e.preventDefault();navigate("/search")}}>Continue as Guest</a>
-            {/* <a href="#" onClick={(e) => { e.preventDefault(); navigate("/distributor-login") }}>Distributor Login Page</a> */}
+            <a href="#" onClick={(e) => { e.preventDefault(); navigate("/distributor-login") }}>Distributor Login Page</a>
         </div>
     </div>
 )}
-
-
 
 export default LoginPage
