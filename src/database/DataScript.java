@@ -20,6 +20,7 @@ public class DataScript {
     private static final String USERS_FILE = "src/database/users.txt";
     private static final String ORDERS_FILE = "src/database/orders.txt";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final LocalDate BASE_ORDER_DATE = LocalDate.of(2026, 7, 31);
 
     public static void main(String[] args) {
         try (DatabaseInteract db = new DatabaseInteract()) {
@@ -144,7 +145,7 @@ public class DataScript {
             String phone = customerOrder[2];
             String status = customerOrder[3];
 
-            LocalDate orderDate = LocalDate.now().minusDays(3 - index);
+            LocalDate orderDate = BASE_ORDER_DATE.minusDays(3 - index);
             LocalDate deliveryDate = orderDate.plusDays(2 + index);
             
 

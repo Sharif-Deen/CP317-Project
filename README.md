@@ -10,10 +10,10 @@
 - [Quick Start](#quick-start)
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
-- [Database](#database)
 - [Running the Application](#running-the-application)
 - [API Endpoints](#api-endpoints)
-- [Product Data Format](#product-data-format)
+- [Database](#database)
+- [Sample Data Format](#sample-data-format)
 - [Available Scripts](#available-scripts)
 - [Troubleshooting](#troubleshooting)
 
@@ -142,58 +142,10 @@ cd ..
 
 Compile the Java source files from the project root. Running this command from the root is important because the database layer uses root-relative paths.
 
-Windows PowerShell or Command Prompt:
-
-```powershell
-New-Item -ItemType Directory -Force bin
+```bash
 javac -d bin -cp "lib/*" src/server/*.java src/features/*.java src/database/*.java
 ```
 
-macOS or Linux:
-
-```bash
-mkdir -p bin
-javac -d bin -cp "lib/*" src/server/*.java src/features/*.java src/database/*.java
-```
-
-
-## Database
-
-The application uses the SQLite database file `src/database/laurierFS.db`. The schema is defined in `src/database/databaseSchema.sql`. 
-
-**The database already contains data. You may follow these steps if you wish to refresh the database, otherwise it is not necessary.**
-
-Initialize or refresh the database schema before loading seed data:
-
-```bash
-sqlite3 src/database/laurierFS.db < src/database/databaseSchema.sql
-```
-
-Then run the data script from the project root:
-
-Windows:
-
-```powershell
-java -cp "lib/*;bin" database.DataScript
-```
-
-macOS or Linux:
-
-```bash
-java -cp "lib/*:bin" database.DataScript
-```
-
-The data script loads products from `src/database/products.txt`, creates sample distributor and customer accounts, and creates sample orders. It also writes generated data to `users.txt` and `orders.txt`.
-
-Sample customer accounts created by the seed script:
-
-| Username | Password |
-| --- | --- |
-| `cust1` | `pw1234` |
-| `cust2` | `abc1234` |
-| `cust3` | `mypass1` |
-
-Distributor accounts are generated from product brands. Their username is the brand, their email is `<brand>@laurierfs.com`, and their seeded password is `pass123`.
 
 ## Running the Application
 
@@ -249,6 +201,68 @@ All API endpoints are served from `http://localhost:8080` and use JSON request a
 | `GET` | `/api/analytics` | Retrieve sales analytics |
 
 The server also handles CORS and browser preflight requests for these endpoints.
+
+## Database
+
+**The database already contains data. You may follow these steps if you wish to completely reset the database with seeded data, otherwise it is not necessary.**
+
+The application uses the SQLite database file `src/database/laurierFS.db`. The schema is defined in `src/database/databaseSchema.sql`. 
+
+**Complete the following commands from the root directory:**
+
+Delete the existing database:
+
+Windows Powershell:
+
+```powershell
+Remove-Item .\src\database\laurierFS.db
+```
+
+macOS / Linux:
+
+```bash
+rm src/database/laurierFS.db
+```
+
+Initialize or refresh the database schema before loading seed data:
+
+Windows Powershell:
+
+```powershell
+sqlite3 src/database/laurierFS.db ".read src/database/databaseSchema.sql"
+```
+
+macOS / Linux / Windows CMD:
+
+```bash
+sqlite3 src/database/laurierFS.db < src/database/databaseSchema.sql
+```
+
+Then run the data script:
+
+Windows:
+
+```powershell
+java -cp "lib/*;bin" database.DataScript
+```
+
+macOS / Linux:
+
+```bash
+java -cp "lib/*:bin" database.DataScript
+```
+
+The data script loads products from `src/database/products.txt`, creates sample distributor and customer accounts, and creates sample orders. It also writes generated data to `users.txt` and `orders.txt` for viewing.
+
+Sample customer accounts created by the seed script:
+
+| Username | Password |
+| --- | --- |
+| `cust1` | `pw1234` |
+| `cust2` | `abc1234` |
+| `cust3` | `mypass1` |
+
+Distributor accounts are generated from product brands. Their username is the brand, their email is `<brand>@laurierfs.com`, and their seeded password is `pass123`.
 
 ## Sample Data Format
 
