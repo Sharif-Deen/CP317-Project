@@ -46,7 +46,7 @@ export const addProduct = async (product) => {
   })
   const data = await response.json()
   if (!response.ok) throw new Error(data.message || "Failed to add product")
-  return data
+  return data.productId
 }
 
 export const editProduct = async (product) => {
@@ -67,13 +67,3 @@ export const deleteProduct = async (productId) => {
   if (!response.ok) throw new Error(data.message || "Failed to delete product")
   return await response.json()
 }
-export const getAnalytics = async (username) => {
-    // Hits the Java backend matching the expected "brand" query parameter
-    const response = await fetch(`${BASE_URL}/api/analytics?brand=${encodeURIComponent(username)}`);
-    
-    if (!response.ok) {
-        throw new Error("Failed to fetch analytics");
-    }
-    
-    return await response.json();
-};

@@ -19,7 +19,7 @@ const OrdersPage = () => {
 
     const setOrders = async () => {
         // load the logged in user's order history
-        const userOrders = await getOrdersByUser(user.username)
+        const userOrders = user? await getOrdersByUser(user.username) : [];
         const formattedOrders = (userOrders).map(orderRaw => {
             const subtotal = Number(orderRaw.totalPrice ?? 0)
 
@@ -116,7 +116,7 @@ const OrdersPage = () => {
 
                 {orders.length === 0 ? (
                     <div className="empty-orders">
-                        <p>No orders yet</p>
+                        <p>{isAuthenticated?"No orders yet":"Complete orders while logged in to view order history"}</p>
                         <button className="shop-btn" onClick={() => navigate("/search")}>
                             Start Shopping
                         </button>

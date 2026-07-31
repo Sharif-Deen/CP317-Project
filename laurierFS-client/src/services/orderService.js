@@ -20,3 +20,14 @@ export const getOrdersByUser = async (username) => {
   if (!response.ok) throw new Error("Failed to fetch Orders");
   return await response.json()
 }
+
+export const getAnalytics = async (username) => {
+    // Hits the Java backend matching the expected "brand" query parameter
+    const response = await fetch(`${BASE_URL}/api/analytics?brand=${encodeURIComponent(username)}`);
+    
+    if (!response.ok) {
+        throw new Error("Failed to fetch analytics");
+    }
+    
+    return await response.json();
+};
