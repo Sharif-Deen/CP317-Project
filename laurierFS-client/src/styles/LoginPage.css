@@ -161,27 +161,27 @@ a {
   width: 100%;
 }
 .input-field-wrapper.has-error input {
-  border: 1px solid #dc2626;
-  background-color: #fef2f2;
+  border: 1px solid var(--errorAccent);
+  background-color: var(--errorBackground);
 }
  
 .input-field-wrapper.has-error input:focus {
-  border-color: #dc2626;
+  border-color: var(--errorAccent);
   box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
 }
  
 .field-error-text {
   display: block;
-  color: #b91c1c;
+  color: var(--errorText);
   font-size: 12px;
   margin-top: 4px;
 }
  
 .login-error {
   width: 100%;
-  color: #b91c1c;
-  background-color: #fef2f2;
-  border: 1px solid #fca5a5;
+  color: var(--errorText);
+  background-color: var(--errorBackground);
+  border: 1px solid var(--errorBorder);
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
   font-size: 13px;
@@ -220,9 +220,9 @@ a {
 
 .login-error {
   width: 100%;
-  color: #b91c1c;
-  background-color: #fef2f2;
-  border: 1px solid #fca5a5;
+  color: var(--errorText);
+  background-color: var(--errorBackground);
+  border: 1px solid var(--errorBorder);
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
   font-size: 13px;

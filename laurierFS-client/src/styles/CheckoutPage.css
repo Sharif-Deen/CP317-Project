@@ -148,7 +148,7 @@
 }
 
 .error {
-  color: #e74c3c;
+  color: var(--errorText);
   font-size: 12px;
   margin: 0;
 }

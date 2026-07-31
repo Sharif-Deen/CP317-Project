@@ -138,9 +138,9 @@
 }
 
 .remove-btn {
-    background: transparent;
-    border: none;
-    color: #c0392b;
+    color: var(--errorText);
+    background: var(--errorBackground);
+    border: var(--errorBorder);
     font-size: 13px;
     cursor: pointer;
     text-decoration: underline;

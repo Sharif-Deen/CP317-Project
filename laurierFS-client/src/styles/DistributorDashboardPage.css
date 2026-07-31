@@ -1,3 +1,5 @@
+@import 'variables.css';
+
 .dashboard-page {
     min-height: 100vh;
     background-color: #f8f9fa;
@@ -7,7 +9,7 @@
 
 /* LFS Branded Navbar */
 .lfs-navbar {
-    background-color: #3b097b; /* Matched to SearchPage purple */
+    background-color: var(--primary); /* Matched to SearchPage purple */
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
@@ -21,7 +23,7 @@
 }
 
 .nav-tagline {
-    color: #dcb63e; /* Laurier Gold */
+    color: var(--accent); /* Laurier Gold */
     font-size: 1.2rem;
     font-style: italic;
     font-weight: 500;
@@ -47,7 +49,7 @@
 
 /* Primary Button matching the "Try Again" button */
 .lfs-primary-btn {
-    background-color: #3b097b;
+    background-color: var(--primary);
     color: white;
     border: none;
     border-radius: 6px;
@@ -109,7 +111,7 @@
 }
 
 .lfs-search-input:focus, .lfs-input:focus {
-    border-color: #3b097b;
+    border-color: var(--primary);
 }
 
 /* Grid System */
@@ -138,7 +140,7 @@
     margin-top: 0;
     margin-bottom: 1.5rem;
     font-size: 1.25rem;
-    color: #3b097b;
+    color: var(--primary);
     font-weight: 600;
 }
 
@@ -157,9 +159,9 @@
 }
 
 .dashboard-error {
-    color: #b91c1c;
-    background-color: #fef2f2;
-    border: 1px solid #fca5a5;
+    color: var(--errorText);
+    background-color: var(--errorBackground);
+    border: 1px solid var(--errorBorder);
     border-radius: 6px;
     padding: 0.5rem 0.75rem;
     font-size: 0.85rem;
@@ -217,8 +219,8 @@
 
 .remove-btn {
     background-color: transparent;
-    color: #ef4444;
-    border: 1px solid #fca5a5;
+    color: var(--errorAccent);
+    border: 1px solid var(--errorBorder);
     padding: 0.35rem 0.85rem;
     border-radius: 4px;
     cursor: pointer;
@@ -282,7 +284,7 @@
 
 .graph-bar {
     height: 100%;
-    background-color: #3b097b; /* Matched to new primary purple */
+    background-color: var(--primary); /* Matched to primary purple */
     border-radius: 6px;
     display: flex;
     align-items: center;

@@ -263,7 +263,7 @@
 }
 
 .error-banner button {
-    background-color: #330072;
+    background-color: var(--primary);
     color: #ffffff;
     border: none;
     padding: 10px 24px;
@@ -273,6 +273,6 @@
 }
 
 .error-banner button:hover {
-    background-color: #f2a900;
-    color: #330072;
+    background-color: var(--accent);
+    color: var(--primary);
 }
