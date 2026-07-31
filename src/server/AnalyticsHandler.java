@@ -21,9 +21,10 @@ public class AnalyticsHandler implements HttpHandler {
         if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
             try (DatabaseInteract database = new DatabaseInteract()) {
                 
-                // Ignore the 'brand' parameter completely now.
-                // It will fetch everything in the database.
-                List<Map<String, Object>> analytics = database.getAllSalesAnalytics();
+                Map<String, String> parameters = ServerUtil.parseQueryParameters(exchange.getRequestURI());
+
+                // get by brand
+                List<Map<String, Object>> analytics = database.getBrandSalesAnalytics(parameters.get("brand"));
                 
                 String jsonResponse = gsonInstance.toJson(analytics);
                 ServerUtil.sendJson(exchange, ServerUtil.STATUS_OK, jsonResponse);

@@ -16,9 +16,7 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,36 +34,6 @@ public class OrderHandler implements HttpHandler {
     // =================
     //  HELPER METHODS:
     // =================
-
-
-    // Helper to parse query parameters from URI into a map.
-    // paramaters: uri - URI object containing the request URI.
-    // returns: Map containing query parameter names and values.
-    private static Map<String, String> parseQueryParameters(URI uri) {
-        // LinkedHashMap to preserve order of query parameters.
-        Map<String, String> queryParameters = new LinkedHashMap<>();
-
-        // Safely get raw query string.
-        String query = null;
-        if (uri != null) {
-            query = uri.getQuery();
-        }
-
-        // If query string present, split into key-value pairs and populate map.
-        if (query != null && !query.isEmpty()) {
-            String[] pairs = query.split("&");
-           
-            // Iterate over key-value pairs and split into key and value.
-            for (String pair : pairs) {
-                String[] keyValue = pair.split("=", 2);
-                
-                if (keyValue.length == 2) {
-                    queryParameters.put(keyValue[0], keyValue[1]);
-                }
-            }
-        }
-        return queryParameters;
-    }
 
     // Helper to read request body as a UTF-8 string.
     // paramaters: requestBody - InputStream containing request body.
@@ -97,7 +65,7 @@ public class OrderHandler implements HttpHandler {
             // Interact with database to fetch orders based on query parameters.
             try (DatabaseInteract database = new DatabaseInteract()) {
                 // Parse query parameters if present.
-                Map<String, String> queryParameters = parseQueryParameters(exchange.getRequestURI());
+                Map<String, String> queryParameters = ServerUtil.parseQueryParameters(exchange.getRequestURI());
 
                 // Fetch orders based on query parameters.
                 if (queryParameters.containsKey("email")) {

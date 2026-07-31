@@ -924,25 +924,47 @@ public class DatabaseInteract implements AutoCloseable {
     // =================
 
     
-   public List<Map<String, Object>> getAllSalesAnalytics() {
-    List<Map<String, Object>> analyticsResults = new ArrayList<>();
-    
-    try {
-        // We removed the "WHERE p.productBrand = ?" clause.
-        // Now it grabs all products and calculates totals for everything.
-        String sqlQuery = 
-            "SELECT p.productNumber as id, p.productName as name, " +
-            "SUM(od.quantity) as sold, SUM(od.quantity * od.price) as revenue " +
-            "FROM orderDetails od " +
-            "JOIN product p ON od.productNumber = p.productNumber " +
-            "GROUP BY p.productNumber, p.productName " +
-            "ORDER BY revenue DESC";
-            
-        analyticsResults = runCustomQuery(sqlQuery); // No parameters needed anymore
-    } catch (SQLException sqlException) {
-        System.out.println("Failed to load analytics: " + sqlException.getMessage());
+    public List<Map<String, Object>> getAllSalesAnalytics() {
+        List<Map<String, Object>> analyticsResults = new ArrayList<>();
+
+        try {
+            // Removed the "WHERE p.productBrand = ?" clause.
+            // Now it grabs all products and calculates totals for everything.
+            String sqlQuery = 
+                "SELECT p.productNumber as id, p.productName as name, " +
+                "SUM(od.quantity) as sold, SUM(od.quantity * od.price) as revenue " +
+                "FROM orderDetails od " +
+                "JOIN product p ON od.productNumber = p.productNumber " +
+                "GROUP BY p.productNumber, p.productName " +
+                "ORDER BY revenue DESC";
+                
+            analyticsResults = runCustomQuery(sqlQuery); // No parameters needed
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to load analytics: " + sqlException.getMessage());
+        }
+
+        return analyticsResults;
     }
-    
-    return analyticsResults;
-}
+
+    public List<Map<String, Object>> getBrandSalesAnalytics(String brand) {
+        List<Map<String, Object>> analyticsResults = new ArrayList<>();
+
+        try {
+            // Grab id, name, num sold, revenue for all products sold by brand
+            String sqlQuery = 
+                "SELECT p.productNumber as id, p.productName as name, " +
+                "SUM(od.quantity) as sold, SUM(od.quantity * od.price) as revenue " +
+                "FROM orderDetails od " +
+                "JOIN product p ON od.productNumber = p.productNumber " +
+                "WHERE p.productBrand LIKE ? " +
+                "GROUP BY p.productNumber, p.productName " +
+                "ORDER BY revenue DESC";
+                
+            analyticsResults = runCustomQuery(sqlQuery, brand); 
+        } catch (SQLException sqlException) {
+            System.out.println("Failed to load analytics: " + sqlException.getMessage());
+        }
+
+        return analyticsResults;
+    }
 }
