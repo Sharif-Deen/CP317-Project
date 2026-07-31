@@ -128,7 +128,7 @@ npm --version
 Clone the repository and enter the project root:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Sharif-Deen/CP317-Project
 cd CP317-Project
 ```
 
