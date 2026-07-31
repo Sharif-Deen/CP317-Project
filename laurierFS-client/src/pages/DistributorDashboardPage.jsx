@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Button from "../components/Button.jsx";
 import InputField from "../components/InputField.jsx";
 import Logo from "../components/Logo.jsx";
-// 1. I added getAnalytics to this import list right here:
-import { getProducts, addProduct, deleteProduct, editProduct, updateProductStock, getAnalytics } from "../services/productService.js";
+import { getProducts, addProduct, deleteProduct, editProduct, updateProductStock } from "../services/productService.js";
+import { getAnalytics } from "../services/orderService.js";
 import "../styles/DistributorDashboardPage.css";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -12,7 +12,6 @@ const DistributorDashboardPage = () => {
     const {user, isAuthenticated, logout} = useAuth();
     const navigate = useNavigate();
     
-    // 2. I moved your analytics state inside the function here:
     const [analytics, setAnalytics] = useState([]);
     
     const [searchQuery, setSearchQuery] = useState("");
@@ -27,8 +26,8 @@ const DistributorDashboardPage = () => {
     const [newItemStock, setNewItemStock] = useState("");
     const [newItemCategory, setNewItemCategory] = useState("");
     const [newItemLocation, setNewItemLocation] = useState("");
-    const [newItemTags, setNewItemTags] = useState(""); // Added
-    const [newItemDescription, setNewItemDescription] = useState(""); // Added
+    const [newItemTags, setNewItemTags] = useState(""); 
+    const [newItemDescription, setNewItemDescription] = useState(""); 
     const [addItemError, setAddItemError] = useState("");
 
     // States for editing an existing item
@@ -45,19 +44,33 @@ const DistributorDashboardPage = () => {
             setAnalytics([
                 { id: 1, name: 'Awaiting First Order...', sold: 0, revenue: 0 }
             ]);
-            alert("Synced up to date! (No new sales found)");
-            return;
+            // alert("Synced up to date! (No new sales found)");
+            return "empty";
         }
 
         // Success: Update the graph and show the single confirmation popup
         setAnalytics(data);
-        alert("Synced up to date!"); 
+        // alert("Synced up to date!"); 
+        return "success";
         
     } catch (err) {
-        console.error("Failed to load real analytics:", err);
-        alert("Error: Failed to sync data.");
-    }
-};
+            console.error("Failed to load real analytics:", err);
+            // alert("Error: Failed to sync data.");
+            return "error";
+        }
+    };
+    const handleManualSync = async () => {
+        const result = await loadAnalytics();
+        
+        if (result === "empty") {
+            alert("Synced up to date! (No new sales found)");
+        } else if (result === "success") {
+            alert("Synced up to date!");
+        } else {
+            alert("Error: Failed to sync data.");
+        }
+    };
+
     const loadCatalog = async () => {
         try {
             const data = await getProducts();
@@ -76,8 +89,13 @@ const DistributorDashboardPage = () => {
                 return;
             }
 
+            const targetUser = user?.username?.trim().toLowerCase()
+            const filteredData = targetUser
+            ? (data || []).filter((prod) => prod?.brand?.trim().toLowerCase() === targetUser)
+            : [];
+
             // If we have real database items, show them
-            setItems(data);
+            setItems(filteredData);
             setCatalogError("");
         } catch (err) {
             console.error("The REAL React crash reason is:", err);
@@ -85,31 +103,19 @@ const DistributorDashboardPage = () => {
         }
     };
 
+    
+
     useEffect(() => {
         loadCatalog();
-        // 3. I added this line so the graph actually loads when the page opens!
         loadAnalytics(); 
     }, []);
     const filteredItems = items.filter((item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
-    // Mock data for the UI (no sales analytics endpoint exists yet)
-    const mockAnalytics = [
-        { id: 1, name: 'Premium Coffee Beans', sold: 342, revenue: '$4,442.58' },
-        { id: 2, name: 'Organic Green Tea', sold: 128, revenue: '$1,214.72' },
-        { id: 3, name: 'Raw Honey Extract', sold: 89, revenue: '$1,335.00' },
-        { id: 4, name: 'Artisan Bread', sold: 210, revenue: '$1,050.00' },
-    ];
-
     
     // Find the max sold value, defaulting to 1 to prevent division by zero errors
- 
-const maxSold = Math.max(...analytics.map(stat => stat.sold), 1);
+    const maxSold = Math.max(...analytics.map(stat => stat.sold), 1);
 
-    const handleLogout = () => {
-        navigate("/distributor-login");
-    };
 
     const handleAddItem = async () => {
         const price = parseFloat(newItemPrice);
@@ -121,7 +127,7 @@ const maxSold = Math.max(...analytics.map(stat => stat.sold), 1);
         }
 
         try {
-            const createdProduct = {
+            const payload = {
                 id: null,
                 name: newItemName,
                 price: price,
@@ -132,9 +138,12 @@ const maxSold = Math.max(...analytics.map(stat => stat.sold), 1);
                 location: newItemLocation,
                 stock: stock,
             };
-            const response = await addProduct(createdProduct);
+            const returnedId = await addProduct(payload);
 
-            createdProduct.id = response.id
+            const createdProduct = {
+                ...payload,
+                id: returnedId
+            }
 
             setItems((prevItems) => [...prevItems, createdProduct]);
             setNewItemName("");
@@ -142,8 +151,8 @@ const maxSold = Math.max(...analytics.map(stat => stat.sold), 1);
             setNewItemStock("");
             setNewItemCategory("");
             setNewItemLocation("");
-            setNewItemTags(""); // Added
-            setNewItemDescription(""); // Added
+            setNewItemTags(""); 
+            setNewItemDescription("");
             setAddItemError("");
         } catch (err) {
             setAddItemError("Failed to add product to the catalog.");
@@ -186,9 +195,9 @@ const maxSold = Math.max(...analytics.map(stat => stat.sold), 1);
 
     const handleRemoveItem = async (itemId) => {
         try {
+            await deleteProduct(itemId);
             setItems((prevItems) =>
                 prevItems.filter(userObj => (userObj.id !== itemId)));
-            await deleteProduct(itemId);
         } catch (err) {
             setCatalogError("Failed to remove product from the catalog.");
         }
@@ -299,7 +308,7 @@ const maxSold = Math.max(...analytics.map(stat => stat.sold), 1);
                                     className="lfs-input"
                                 />
                             </div>
-                            {/* New Tags Field */}
+                            {/* Tags Field */}
                             <div className="input-group">
                                 <label>Tags (comma separated)</label>
                                 <input
@@ -310,7 +319,7 @@ const maxSold = Math.max(...analytics.map(stat => stat.sold), 1);
                                     className="lfs-input"
                                 />
                             </div>
-                            {/* New Description Field */}
+                            {/* Description Field */}
                             <div className="input-group">
                                 <label>Description</label>
                                 <input
@@ -390,10 +399,10 @@ const maxSold = Math.max(...analytics.map(stat => stat.sold), 1);
                             <p>Visual performance metrics for your distributed products.</p>
                         </div>
                         
-                        {/* Native HTML button using your existing CSS class */}
+                        {/* Native HTML button using existing CSS class */}
                         <button 
                             className="lfs-primary-btn" 
-                            onClick={loadAnalytics}
+                            onClick={handleManualSync}
                             type="button"
                         >
                             Sync Live DB Sales
