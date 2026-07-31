@@ -2,7 +2,10 @@ package server;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.sun.net.httpserver.Headers;
 
@@ -50,5 +53,19 @@ public class ServerUtil {
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(jsonResponse.getBytes(StandardCharsets.UTF_8));
         }
+    }
+
+    public static Map<String, String> parseQueryParameters(URI uri) {
+        Map<String, String> queryParameters = new LinkedHashMap<>();
+        String query = uri != null ? uri.getQuery() : null;
+        if (query != null && !query.isEmpty()) {
+            for (String pair : query.split("&")) {
+                String[] keyValue = pair.split("=", 2);
+                if (keyValue.length == 2) {
+                    queryParameters.put(keyValue[0], keyValue[1]);
+                }
+            }
+        }
+        return queryParameters;
     }
 }
