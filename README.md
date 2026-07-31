@@ -137,6 +137,25 @@ mkdir -p bin
 javac -d bin -cp "lib/*" src/server/*.java src/features/*.java src/database/*.java
 ```
 
+## Run in GitHub Codespaces
+
+Codespaces can prepare and run the complete application without requiring the installation of Java or Node.js locally.
+
+1. Open the repository on GitHub.
+2. Select **Code**, open the **Codespaces** tab, and choose **Create codespace on main**.
+3. Wait for setup to finish. Dependencies are installed, Java is compiled, and both servers start automatically.
+4. Open the forwarded **LaurierFS client** port (`5173`) when prompted.
+
+The client uses the Vite proxy to reach the Java API on port `8080`, so all features work inside the Codespace just as they would if ran locally. The SQLite database is stored in the Codespace and should be treated as development data, not permanent production storage.
+
+To start the processes again from the Codespace terminal:
+
+```bash
+bash .devcontainer/start.sh
+```
+
+Codespaces may stop after a period of inactivity. Reopening the Codespace starts the services again.
+
 ## Database
 
 The application uses the SQLite database file `src/database/laurierFS.db`. The schema is defined in `src/database/databaseSchema.sql`. 
@@ -267,7 +286,7 @@ Run Java commands from `CP317-Project`, not from `src` or `laurierFS-client`. Th
 
 ### The frontend cannot connect to the backend
 
-Confirm that the Java server is running on port 8080 and that the frontend is using `http://localhost:8080`. Check the browser console and the Java terminal for error messages.
+Confirm that the Java server is running on port 8080. During local development, Vite proxies `/api` requests to the server; Codespaces uses the same proxy through the forwarded client port. Check `/tmp/laurierfs/server.log` and `/tmp/laurierfs/client.log` in Codespaces for error messages.
 
 ### Port 8080 or 5173 is already in use
 
