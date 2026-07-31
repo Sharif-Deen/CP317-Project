@@ -1,7 +1,5 @@
 # Laurier Food Services
 
-## Project Description
-
 
 ## Table of Contents
 
@@ -9,6 +7,7 @@
 - [Features](#features)
 - [Technology Stack](#technology-stack)
 - [Project Structure](#project-structure)
+- [Quick Start](#quick-start)
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
 - [Database](#database)
@@ -85,6 +84,26 @@ CP317-Project/
 └── README.md
 ```
 
+## Quick Start
+
+Codespaces can prepare and run the complete application without requiring the installation of Java or Node.js locally. See [Prerequisites](#prerequisites), [Getting Started](#getting-started), and [Running the Application](#running-the-application) if you wish to run the application locally.
+
+1. Open the repository on GitHub.
+2. Click the green **Code** button, open the **Codespaces** tab, and choose **Create codespace on main**.
+3. Wait for setup to finish (this may take a few minutes). Dependencies are installed, Java is compiled, and both servers start automatically. The application should open automatically.
+
+The client uses the Vite proxy to reach the Java API on port `8080`, so all features work inside the Codespace just as they would if ran locally. The SQLite database is stored in the Codespace and should be treated as development data, not permanent production storage.
+
+To start the processes again from the Codespace terminal:
+
+```bash
+bash .devcontainer/start.sh
+```
+
+Your browser may block the Codespace from opening a pop-up window. If the application did not open, within the Codespace click on the PORTS tab and open port 5173.
+
+To close the Codespace, click the `Codespaces` button in the bottom left corner, then click `Stop Current Codespace` from the dropdown. Otherwise, Codespaces will stop after a period of inactivity. Reopening the Codespace starts the services again.
+
 ## Prerequisites
 
 Install the following before starting:
@@ -137,30 +156,12 @@ mkdir -p bin
 javac -d bin -cp "lib/*" src/server/*.java src/features/*.java src/database/*.java
 ```
 
-## Run in GitHub Codespaces
-
-Codespaces can prepare and run the complete application without requiring the installation of Java or Node.js locally.
-
-1. Open the repository on GitHub.
-2. Select **Code**, open the **Codespaces** tab, and choose **Create codespace on main**.
-3. Wait for setup to finish. Dependencies are installed, Java is compiled, and both servers start automatically.
-4. Open the forwarded **LaurierFS client** port (`5173`) when prompted.
-
-The client uses the Vite proxy to reach the Java API on port `8080`, so all features work inside the Codespace just as they would if ran locally. The SQLite database is stored in the Codespace and should be treated as development data, not permanent production storage.
-
-To start the processes again from the Codespace terminal:
-
-```bash
-bash .devcontainer/start.sh
-```
-
-Codespaces may stop after a period of inactivity. Reopening the Codespace starts the services again.
 
 ## Database
 
 The application uses the SQLite database file `src/database/laurierFS.db`. The schema is defined in `src/database/databaseSchema.sql`. 
 
-**The database already contains data. You may follow these steps if you wish to refresh the database.**
+**The database already contains data. You may follow these steps if you wish to refresh the database, otherwise it is not necessary.**
 
 Initialize or refresh the database schema before loading seed data:
 
@@ -284,7 +285,7 @@ Compile and run with the complete `lib/*` classpath. The SQLite JDBC jar must be
 
 Run Java commands from `CP317-Project`, not from `src` or `laurierFS-client`. The database code expects paths beginning with `src/database/`.
 
-### The frontend cannot connect to the backend
+### The frontend cannot connect to the backend ('Failed to fetch')
 
 Confirm that the Java server is running on port 8080. During local development, Vite proxies `/api` requests to the server; Codespaces uses the same proxy through the forwarded client port. Check `/tmp/laurierfs/server.log` and `/tmp/laurierfs/client.log` in Codespaces for error messages.
 

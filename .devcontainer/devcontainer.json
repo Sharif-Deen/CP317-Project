@@ -18,5 +18,5 @@
     }
   },
   "postCreateCommand": "npm install --prefix laurierFS-client && mkdir -p bin && javac -d bin -cp 'lib/*' src/server/*.java src/features/*.java src/database/*.java",
-  "postStartCommand": "bash .devcontainer/start.sh"
+  "postAttachCommand": "bash .devcontainer/start.sh"
 }
