@@ -4,4 +4,8 @@ Also, @import 'variables.css' at the top of the css file*/
 :root {
   --primary: #330072;
   --accent: #f2a900;
+  --errorText: #b91c1c;
+  --errorAccent: #dc2626;
+  --errorBackground: #fef2f2;
+  --errorBorder: #fca5a5;
 }
