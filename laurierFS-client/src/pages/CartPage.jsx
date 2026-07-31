@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext.jsx"
 const CartPage = () => {
     const navigate = useNavigate()
     const { items, removeFromCart, updateQuantity, clearCart, cartTotal, bulkDiscount, BULK_DISCOUNT_THRESHOLD } = useCart()
-    const { isAuthenticated } = useAuth()
+    const { isAuthenticated, logout } = useAuth()
     const TAX_RATE = 0.13
     const discountedSubtotal = cartTotal - bulkDiscount
     const tax = discountedSubtotal * TAX_RATE

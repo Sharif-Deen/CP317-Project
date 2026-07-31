@@ -13,7 +13,7 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const { items, clearCart, cartTotal, bulkDiscount } = useCart();
   const { placeOrder } = useOrders();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const [step, setStep] = useState(1);
 
@@ -60,8 +60,25 @@ export default function CheckoutPage() {
       return;
     }
 
+    //if guest user
+    if (!isAuthenticated){
+      const order =  placeOrder({
+        id: `${Date.now()}`,
+        items: items,
+        subtotal: cartTotal,
+        discount: bulkDiscount,
+        tax: tax,
+        total: total,
+        shipping: { ...shipping },
+        payment: { method: payment.method, lastFour: payment.cardNumber.slice(-4) },
+      });
+      setPlacedOrder(order);
+      clearCart();
+      setStep(3);
+    }
+  
     const serverOrderPayload = {
-      email: user.email,
+      email: user?.email,
       phone: shipping.phone,
       totalPrice: 0, //price calculated in handler when received
       orderDate: new Date().toISOString().slice(0, 10),
@@ -97,7 +114,7 @@ export default function CheckoutPage() {
           <Logo light={true} />
           <span className="header-tagline">Serving the Waterloo Region</span>
           <div className="nav-links">
-            <button className="cancel-btn" onClick={() => navigate("/cart")}>Back to Cart</button>
+            <button className="cart-btn" onClick={() => navigate("/cart")}>Back to Cart</button>
             <button className="cart-btn" onClick={() => {logout();navigate("/")}}>👤 {isAuthenticated?"Logout":"Log in"}</button>
           </div>
         </div>
@@ -117,7 +134,7 @@ export default function CheckoutPage() {
         <Logo light={true} />
         <span className="header-tagline">Serving the Waterloo Region</span>
         <div className="nav-links">
-          <button className="cancel-btn" onClick={() => navigate("/cart")}>Back to Cart</button>
+          <button className="cart-btn" onClick={() => navigate("/cart")}>Back to Cart</button>
           <button className="cart-btn" onClick={() => {logout();navigate("/")}}>👤 {isAuthenticated?"Logout":"Log in"}</button>
         </div>
       </div>
