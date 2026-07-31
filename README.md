@@ -102,7 +102,7 @@ bash .devcontainer/start.sh
 
 Your browser may block the Codespace from opening a pop-up window. If the application did not open, within the Codespace click on the PORTS tab and open port 5173.
 
-To close the Codespace, click the `Codespaces` button in the bottom left corner, then click `Stop Current Codespace` from the dropdown. Otherwise, Codespaces will stop after a period of inactivity. Reopening the Codespace starts the services again.
+To close the Codespace, click the `Codespaces` button in the bottom left corner, then click `Stop Current Codespace` from the dropdown. Alternatively, go back to the repository home page, click the **Code** button and stop the Codespace from there. Otherwise, Codespaces will stop after a period of inactivity. Reopening the Codespace starts the services again.
 
 ## Prerequisites
 
@@ -218,7 +218,7 @@ npm run dev -- --open
 
 The Vite development server normally runs at `http://localhost:5173`.
 
-The frontend services currently use `http://localhost:8080` as the backend base URL. Start the backend before using features that require database access.
+During local development, Vite proxies frontend `/api` requests to the backend on port `8080`. Start the backend before using features that require database access.
 
 ### Run the frontend production build
 
@@ -281,14 +281,34 @@ Run these commands from `laurierFS-client`:
 
 Compile and run with the complete `lib/*` classpath. The SQLite JDBC jar must be available in `lib`.
 
+### Codespaces setup appears finished, but no application opens
+
+The terminal prompt only means that the Codespace shell is ready. Check the **PORTS** tab and open port `5173` (LaurierFS client); port `8080` is the backend API and is not the application page.
+
+If neither port is available, run this from the repository root:
+
+```bash
+bash .devcontainer/start.sh
+```
+
+Then check the startup logs:
+
+```bash
+cat /tmp/laurierfs/server.log
+cat /tmp/laurierfs/client.log
+```
+
+If all else fails, run **Codespaces: Rebuild Container** from the VS Code Command Palette (Open with `F1` in the Codespace). A normal reconnect does not necessarily rebuild the container or rerun `postCreateCommand`.
+
+
 ### The server cannot find the database or seed files
 
 Run Java commands from `CP317-Project`, not from `src` or `laurierFS-client`. The database code expects paths beginning with `src/database/`.
 
 ### The frontend cannot connect to the backend ('Failed to fetch')
 
-Confirm that the Java server is running on port 8080. During local development, Vite proxies `/api` requests to the server; Codespaces uses the same proxy through the forwarded client port. Check `/tmp/laurierfs/server.log` and `/tmp/laurierfs/client.log` in Codespaces for error messages.
+Confirm that the Java server is running on port 8080. In Codespaces, open the frontend through forwarded port `5173`, not port `8080`. Vite proxies `/api` requests to the Java server. Check `/tmp/laurierfs/server.log` and `/tmp/laurierfs/client.log` for error messages.
 
 ### Port 8080 or 5173 is already in use
 
-Stop the process using the port, or start the frontend with another Vite port. The backend currently binds to port 8080 in `src/server/Server.java`.
+Stop the process using the port, or restart the Codespace. The backend currently binds to port 8080 in `src/server/Server.java`, and the frontend uses port 5173. If the Java server reports an exit code of 1, inspect its terminal output or `/tmp/laurierfs/server.log`, an occupied port is a common cause.
