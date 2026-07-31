@@ -270,9 +270,7 @@ const LoginPage = ()=> {
                 <span className="auth-toggle-text">{isSignUp?"Already have an account? ":"Don't have an account? "}</span>
                 <a href="#" onClick={toggleAuth}>{isSignUp?"Login":"Sign Up"}</a>
             </div>
-            {/* {!isSignUp && <a href="#">Forgot Password?</a>} */}
             <a href="#" onClick={(e)=>{e.preventDefault();navigate("/search")}}>Continue as Guest</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); navigate("/distributor-login") }}>Distributor Login Page</a>
         </div>
     </div>
 )}
